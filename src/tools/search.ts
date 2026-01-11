@@ -4,7 +4,7 @@ import { ConnectClient } from '../services/connect-client.js'
 import { mcpError } from '../lib/errors.js'
 import type { ApiSongObject } from '../lib/schemas.js'
 
-const TOOL_NAME = 'onsong.library.search'
+const TOOL_NAME = 'onsong_library_search'
 const TOOL_DESCRIPTION = 'Search songs by title, artist, or text query'
 
 const targetSchema = z.object({

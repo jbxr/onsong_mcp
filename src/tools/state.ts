@@ -4,7 +4,7 @@ import { ConnectClient } from '../services/connect-client.js'
 import { mcpError } from '../lib/errors.js'
 import type { ApiSongObject, ApiSetObject, ApiStateObject } from '../lib/schemas.js'
 
-const TOOL_NAME = 'onsong.state.get'
+const TOOL_NAME = 'onsong_state_get'
 const TOOL_DESCRIPTION =
   'Get current performance state including current song, set, and scroll position'
 
