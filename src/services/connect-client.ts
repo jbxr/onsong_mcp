@@ -5,6 +5,11 @@ import type {
   ApiStateObject,
   ApiSongsSearchResponse,
   ApiSetsListResponse,
+  ApiCreateSongResponse,
+  ApiUpdateContentResponse,
+  ApiCreateSetResponse,
+  ApiSetDetailResponse,
+  ApiAddSongToSetResponse,
 } from '../lib/schemas.js'
 import {
   apiAuthResponseSchema,
@@ -12,6 +17,11 @@ import {
   apiStateObjectSchema,
   apiSongsSearchResponseSchema,
   apiSetsListResponseSchema,
+  apiCreateSongResponseSchema,
+  apiUpdateContentResponseSchema,
+  apiCreateSetResponseSchema,
+  apiSetDetailResponseSchema,
+  apiAddSongToSetResponseSchema,
 } from '../lib/schemas.js'
 import { OnSongError, ErrorCodes } from '../lib/errors.js'
 import { createChildLogger } from '../lib/logger.js'
@@ -33,6 +43,14 @@ export interface SearchParams {
   key?: string
   limit?: number
   start?: number
+}
+
+export interface CreateSongParams {
+  title: string
+  artist?: string | undefined
+  key?: string | undefined
+  tempo?: number | undefined
+  timeSignature?: string | undefined
 }
 
 export class ConnectClient {
@@ -154,6 +172,199 @@ export class ConnectClient {
   async listSets(): Promise<ApiSetsListResponse> {
     const response = await this.request<ApiSetsListResponse>('GET', '/sets')
     return apiSetsListResponseSchema.parse(response)
+  }
+
+  async createSet(name: string): Promise<ApiCreateSetResponse> {
+    const response = await this.request<ApiCreateSetResponse>('PUT', '/sets', { name })
+    const parsed = apiCreateSetResponseSchema.parse(response)
+
+    if (parsed.error !== undefined) {
+      throw new OnSongError(ErrorCodes.API_ERROR, { message: parsed.error })
+    }
+
+    this.logger.info({ setId: parsed.success?.ID, name }, 'Set created')
+    return parsed
+  }
+
+  async getSet(setId: string): Promise<ApiSetDetailResponse> {
+    const response = await this.request<ApiSetDetailResponse>(
+      'GET',
+      `/sets/${encodeURIComponent(setId)}`
+    )
+    return apiSetDetailResponseSchema.parse(response)
+  }
+
+  async addSongToSet(setId: string, songId: string): Promise<ApiAddSongToSetResponse> {
+    const response = await this.request<ApiAddSongToSetResponse>(
+      'PUT',
+      `/sets/${encodeURIComponent(setId)}/songs`,
+      { songID: songId }
+    )
+    const parsed = apiAddSongToSetResponseSchema.parse(response)
+
+    if (parsed.error !== undefined) {
+      throw new OnSongError(ErrorCodes.API_ERROR, { message: parsed.error })
+    }
+
+    this.logger.info({ setId, songId }, 'Song added to set')
+    return parsed
+  }
+
+  async getSongContent(songId: string): Promise<string> {
+    const url = this.buildUrl(`/songs/${encodeURIComponent(songId)}/content`)
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), this.timeoutMs)
+
+    this.logger.debug({ songId }, 'Fetching song content')
+
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        signal: controller.signal,
+      })
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new OnSongError(ErrorCodes.API_NOT_FOUND, { songId })
+        }
+        const text = await response.text()
+        this.logger.error({ status: response.status, body: text }, 'Content fetch failed')
+        throw new OnSongError(ErrorCodes.API_ERROR, { status: response.status, body: text })
+      }
+
+      const content = await response.text()
+      this.logger.info({ songId, contentLength: content.length }, 'Song content fetched')
+      return content
+    } catch (error) {
+      if (error instanceof OnSongError) throw error
+
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw new OnSongError(ErrorCodes.CONNECTION_TIMEOUT, { timeoutMs: this.timeoutMs })
+      }
+
+      const message = error instanceof Error ? error.message : String(error)
+      this.logger.error({ err: error }, 'Content fetch error')
+      throw new OnSongError(ErrorCodes.CONNECTION_REFUSED, { message })
+    } finally {
+      clearTimeout(timeoutId)
+    }
+  }
+
+  async createSong(params: CreateSongParams): Promise<ApiCreateSongResponse> {
+    const response = await this.request<ApiCreateSongResponse>('PUT', '/songs', params)
+    const parsed = apiCreateSongResponseSchema.parse(response)
+
+    if (parsed.error !== undefined) {
+      throw new OnSongError(ErrorCodes.API_ERROR, { message: parsed.error })
+    }
+
+    this.logger.info({ songId: parsed.success?.ID, title: params.title }, 'Song created')
+    return parsed
+  }
+
+  async updateSongContent(songId: string, content: string): Promise<ApiUpdateContentResponse> {
+    const url = this.buildUrl(`/songs/${encodeURIComponent(songId)}/content`)
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), this.timeoutMs)
+
+    this.logger.debug({ songId, contentLength: content.length }, 'Updating song content')
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: content,
+        signal: controller.signal,
+      })
+
+      if (!response.ok) {
+        const text = await response.text()
+        this.logger.error({ status: response.status, body: text }, 'Content update failed')
+        throw new OnSongError(ErrorCodes.API_ERROR, { status: response.status, body: text })
+      }
+
+      const data: unknown = await response.json()
+      const parsed = apiUpdateContentResponseSchema.parse(data)
+
+      if (parsed.error !== undefined) {
+        throw new OnSongError(ErrorCodes.API_ERROR, { message: parsed.error })
+      }
+
+      this.logger.info({ songId }, 'Song content updated')
+      return parsed
+    } catch (error) {
+      if (error instanceof OnSongError) throw error
+
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw new OnSongError(ErrorCodes.CONNECTION_TIMEOUT, { timeoutMs: this.timeoutMs })
+      }
+
+      const message = error instanceof Error ? error.message : String(error)
+      this.logger.error({ err: error }, 'Content update error')
+      throw new OnSongError(ErrorCodes.CONNECTION_REFUSED, { message })
+    } finally {
+      clearTimeout(timeoutId)
+    }
+  }
+
+  async importSong(content: string): Promise<{ songId: string; title: string }> {
+    const metadata = this.parseChartMetadata(content)
+
+    const createResponse = await this.createSong({
+      title: metadata.title,
+      artist: metadata.artist,
+      key: metadata.key,
+      tempo: metadata.tempo,
+    })
+
+    const songId = createResponse.success?.ID
+    if (songId === undefined) {
+      throw new OnSongError(ErrorCodes.API_ERROR, { message: 'No song ID returned from create' })
+    }
+
+    await this.updateSongContent(songId, content)
+
+    return { songId, title: metadata.title }
+  }
+
+  private parseChartMetadata(content: string): CreateSongParams {
+    const lines = content.split('\n')
+    let title = 'Untitled'
+    let artist: string | undefined
+    let key: string | undefined
+    let tempo: number | undefined
+
+    for (const line of lines) {
+      const trimmed = line.trim()
+
+      const titleMatch = trimmed.match(/^\{title:\s*(.+?)\}$/i)
+      if (titleMatch !== null && titleMatch[1] !== undefined) {
+        title = titleMatch[1]
+        continue
+      }
+
+      const artistMatch = trimmed.match(/^\{artist:\s*(.+?)\}$/i)
+      if (artistMatch !== null && artistMatch[1] !== undefined) {
+        artist = artistMatch[1]
+        continue
+      }
+
+      const keyMatch = trimmed.match(/^\{key:\s*(.+?)\}$/i)
+      if (keyMatch !== null && keyMatch[1] !== undefined) {
+        key = keyMatch[1]
+        continue
+      }
+
+      const tempoMatch = trimmed.match(/^\{tempo:\s*(\d+)\}$/i)
+      if (tempoMatch !== null && tempoMatch[1] !== undefined) {
+        tempo = parseInt(tempoMatch[1], 10)
+        continue
+      }
+
+      if (!trimmed.startsWith('{')) break
+    }
+
+    return { title, artist, key, tempo }
   }
 
   getToken(): string {

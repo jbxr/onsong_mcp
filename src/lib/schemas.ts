@@ -251,6 +251,52 @@ export const apiSetsListResponseSchema = z.object({
   results: z.array(apiSetObjectSchema),
 })
 
+export const apiCreateSongResponseSchema = z.object({
+  success: z
+    .object({
+      ID: z.string(),
+      title: z.string(),
+      artist: z.string().optional(),
+      key: z.string().optional(),
+    })
+    .optional(),
+  error: z.string().optional(),
+})
+
+export const apiUpdateContentResponseSchema = z.object({
+  success: z
+    .object({
+      ID: z.string(),
+      title: z.string(),
+    })
+    .optional(),
+  error: z.string().optional(),
+})
+
+export const apiCreateSetResponseSchema = z.object({
+  success: z
+    .object({
+      ID: z.string(),
+      name: z.string(),
+    })
+    .optional(),
+  error: z.string().optional(),
+})
+
+export const apiSetDetailResponseSchema = z.object({
+  ID: z.string().optional(),
+  name: z.string(),
+  archived: z.boolean().optional(),
+  dateCreated: z.string().optional(),
+  dateModified: z.string().optional(),
+  songs: z.array(apiSongObjectSchema).optional(),
+})
+
+export const apiAddSongToSetResponseSchema = z.object({
+  success: z.string().optional(),
+  error: z.string().optional(),
+})
+
 export type DeviceMetadata = z.infer<typeof deviceMetadataSchema>
 export type OnSongDevice = z.infer<typeof onSongDeviceSchema>
 export type Target = z.infer<typeof targetSchema>
@@ -286,3 +332,8 @@ export type ApiSetObject = z.infer<typeof apiSetObjectSchema>
 export type ApiStateObject = z.infer<typeof apiStateObjectSchema>
 export type ApiSongsSearchResponse = z.infer<typeof apiSongsSearchResponseSchema>
 export type ApiSetsListResponse = z.infer<typeof apiSetsListResponseSchema>
+export type ApiCreateSongResponse = z.infer<typeof apiCreateSongResponseSchema>
+export type ApiUpdateContentResponse = z.infer<typeof apiUpdateContentResponseSchema>
+export type ApiCreateSetResponse = z.infer<typeof apiCreateSetResponseSchema>
+export type ApiSetDetailResponse = z.infer<typeof apiSetDetailResponseSchema>
+export type ApiAddSongToSetResponse = z.infer<typeof apiAddSongToSetResponseSchema>

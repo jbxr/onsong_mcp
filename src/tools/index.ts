@@ -9,6 +9,7 @@ import { registerActionRunTool } from './action.js'
 import { registerImportTool } from './import.js'
 import { registerExportTool } from './export.js'
 import { registerOpenTool } from './open.js'
+import { registerSetsTools } from './sets.js'
 
 export function registerAllTools(server: McpServer, config: Config): void {
   const discovery = new DiscoveryService()
@@ -21,4 +22,5 @@ export function registerAllTools(server: McpServer, config: Config): void {
   registerImportTool(server, config)
   registerExportTool(server, config)
   registerOpenTool(server)
+  registerSetsTools(server)
 }
