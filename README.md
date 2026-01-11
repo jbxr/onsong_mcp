@@ -220,6 +220,15 @@ npm start -- --dry-run --log-level debug
 | `onsong.sets.create`    | Create a new set                                    |
 | `onsong.sets.add_song`  | Add a song to a set                                 |
 
+## Available Resources
+
+| Resource          | URI                      | Description                                      |
+| ----------------- | ------------------------ | ------------------------------------------------ |
+| `chordpro-format` | `docs://chordpro-format` | ChordPro format reference guide for chart import |
+
+Resources provide reference documentation that LLM clients can access to improve their responses. The ChordPro format resource helps LLMs format chord charts correctly for OnSong import without needing to search for format documentation.
+
+
 ## Example Usage
 
 Once configured, you can interact with OnSong through your LLM client:

@@ -3,6 +3,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import type { Config } from './lib/schemas.js'
 import { createLogger, setLogger } from './lib/logger.js'
 import { registerAllTools } from './tools/index.js'
+import { registerAllResources } from './resources/index.js'
 
 export interface ServerOptions {
   config: Config
@@ -20,6 +21,7 @@ export function createMcpServer(options: ServerOptions): McpServer {
   })
 
   registerAllTools(server, config)
+  registerAllResources(server)
 
   return server
 }
