@@ -164,12 +164,18 @@ export const searchOutputSchema = z.object({
 
 export const importOutputSchema = z.object({
   ok: z.boolean(),
+  songId: z.string().optional(),
+  title: z.string().optional(),
+  method: z.enum(['rest_api', 'url_scheme']).optional(),
   onsong_result: z.string().optional(),
   warnings: z.array(z.string()).optional(),
 })
 
 export const exportOutputSchema = z.object({
-  exported_files: z.array(z.string()),
+  exported_files: z.array(z.string()).optional(),
+  content: z.string().optional(),
+  song_id: z.string().optional(),
+  method: z.enum(['rest_api', 'url_scheme']).optional(),
   warnings: z.array(z.string()).optional(),
 })
 
