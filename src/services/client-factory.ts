@@ -1,5 +1,5 @@
 import { ConnectClient, type ConnectClientOptions } from './connect-client.js'
-import { getOrCreateToken, setToken } from './token-cache.js'
+import { getOrCreateToken } from './token-cache.js'
 
 export interface Target {
   host: string
