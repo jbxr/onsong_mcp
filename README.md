@@ -199,20 +199,20 @@ npm start -- --dry-run --log-level debug
 
 ## Available Tools
 
-| Tool                   | Description                                         |
-| ---------------------- | --------------------------------------------------- |
-| `onsong.discover`      | Find OnSong devices on the local network            |
-| `onsong.connect.test`  | Test connection to an OnSong device                 |
-| `onsong.state.get`     | Get current song, set, and position                 |
-| `onsong.search`        | Search the song library                             |
-| `onsong.action.run`    | Trigger OnSong actions (next song, scroll, etc.)    |
-| `onsong.open`          | Open a specific song or set                         |
-| `onsong.import`        | Import a chart file (requires `enableImport: true`) |
-| `onsong.export`        | Export songs in various formats                     |
-| `onsong.sets.list`     | List all sets                                       |
-| `onsong.sets.get`      | Get details of a specific set                       |
-| `onsong.sets.create`   | Create a new set                                    |
-| `onsong.sets.add_song` | Add a song to a set                                 |
+| Tool                    | Description                                         |
+| ----------------------- | --------------------------------------------------- |
+| `onsong.discover`       | Find OnSong devices on the local network            |
+| `onsong.connect_test`   | Test connection to an OnSong device                 |
+| `onsong.state.get`      | Get current song, set, and position                 |
+| `onsong.library.search` | Search the song library                             |
+| `onsong.action.run`     | Trigger OnSong actions (next song, scroll, etc.)    |
+| `onsong.open`           | Open a specific song or set                         |
+| `onsong.library.import` | Import a chart file (requires `enableImport: true`) |
+| `onsong.library.export` | Export songs in various formats                     |
+| `onsong.sets.list`      | List all sets                                       |
+| `onsong.sets.get`       | Get details of a specific set                       |
+| `onsong.sets.create`    | Create a new set                                    |
+| `onsong.sets.add_song`  | Add a song to a set                                 |
 
 ## Example Usage
 
