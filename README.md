@@ -17,6 +17,7 @@ An MCP (Model Context Protocol) server that enables LLM clients to interact with
 - **Import/Export** - Import ChordPro charts and export songs in various formats
 - **Set Management** - List, create, and manage sets
 - **Smart Prompts** - Guided workflows for chord chart formatting and finding
+- **Reference Resources** - ChordPro format guide and documentation
 
 ## Requirements
 
@@ -280,6 +281,14 @@ The prompt will guide the LLM to:
 4. Use the `onsong_library_import` tool to add it to OnSong
 
 The prompt recommends sources like Ultimate Guitar, Chordie, and official sheet music sites.
+
+## Available Resources
+
+| Resource          | URI                      | Description                                      |
+| ----------------- | ------------------------ | ------------------------------------------------ |
+| `chordpro-format` | `docs://chordpro-format` | ChordPro format reference guide for chart import |
+
+Resources provide reference documentation that LLM clients can access to improve their responses. The ChordPro format resource helps LLMs format chord charts correctly for OnSong import without needing to search for format documentation.
 
 ## Example Usage
 
