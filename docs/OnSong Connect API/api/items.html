@@ -1,0 +1,378 @@
+<html>
+	<head>
+		<title>OnSong API: Set Items</title>
+		<link rel="stylesheet" type="text/css" href="../assets/styles/default.css"/>
+	</head>
+	<body>
+		<header>
+			<div id="logo"/>
+		</header>
+		<div id="content">
+			<h2>Set Items</h2>
+			<p>Set contain songs that can be viewed and modified.</p>
+
+			<h3 id="api_songs">List songs</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/sets/&lt;set_identifier&gt;/songs</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>GET</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+
+			<h4>Description</h4>
+			<p>Lists songs contained within the set in the appropriate order.</p>
+
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>set_identifier</strong></td>
+						<td>string</td>
+						<td>The identifier of the set.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>Returns a list of songs in the set including the song's unique identifier, title and other basic information.</p>
+			
+			<h4>Response example</h4>
+			<pre>[
+    {
+        "artist": "Bryan Adams",
+        "title": "Cuts Like A Knife",
+        "favorite": 0,
+        "usefile": false,
+        "key": "D",
+        "class": "Song",
+        "ID": "D3E86FCD-356A-48A1-AC31-B0B6FC12F025"
+    },
+    {
+        "ID": "C43DC77D-68BF-4BFE-8A56-BCB51CF73AC5",
+        "title": "Time Is On My Side",
+        "favorite": 0,
+        "usefile": false,
+        "class": "Song",
+        "artist": "Rolling Stones"
+    },
+    {
+        "ID": "63FD467D-EF75-4EA6-B22C-104DB919D3DA",
+        "title": "Long Hard Road",
+        "favorite": 0,
+        "usefile": false,
+        "class": "Song",
+        "artist": "Nitty Gritty Dirt Band"
+    },
+    {
+        "ID": "2F0021FE-60DD-41A6-8354-CEBB9B99B95B",
+        "title": "And We Danced",
+        "favorite": 0,
+        "usefile": false,
+        "class": "Song",
+        "artist": "Hooters"
+    }
+]</pre>
+
+			<h3>Add songs</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/sets/&lt;set_identifier&gt;/songs</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>PUT</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+			
+			<h4>Description</h4>
+			<p>Adds new songs to the set, optionally placing the songs.</p>
+			
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>set_identifier</strong></td>
+						<td>string</td>
+						<td>The identifier of the set.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Body arguments</h4>
+			<p>The body can contain a single identifier as a string, an array of identifiers or song objects, or an object containing the following:</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>songs</strong></td>
+						<td>array</td>
+						<td>The identifiers or song objects of the songs to be added to the set.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>placement</strong></td>
+						<td>number</td>
+						<td>The placement of the songs within the set. If set to zero, the songs are added to the beginning of the set. If set to a number greater than the current number of songs in the set, the songs are added to the end of the set.  Otherwise the songs are added in their zero-based index in the set.</td>
+						<td>Optional</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>One of two results will be returned:</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>success</strong></td>
+						<td>object</td>
+						<td>The operation was successful and basic set information is returned.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>error</strong></td>
+						<td>string</td>
+						<td>The operation has failed and text indicating the error is returned.</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Response example</h4>
+			<p>The following is an example of a successful update:</p>
+			<pre>[
+    {
+        "success": {
+            "/sets/4246F094-AD81-4EE3-B446-2C48AC88DF87/songs": [
+                "D3E86FCD-356A-48A1-AC31-B0B6FC12F025"
+            ]
+        }
+    }
+]</pre>
+
+			<h3>Update songs</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/sets/&lt;set_identifier&gt;/songs</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>POST</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+			
+			<h4>Description</h4>
+			<p>Updates the songs in the set list which can be used to reorder, add and remove songs.</p>
+
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>set_identifier</strong></td>
+						<td>string</td>
+						<td>The identifier of the set.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Body arguments</h4>
+			<p>The body can contain a single identifier as a string, an array of identifiers or song objects, or an object containing the following:</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>songs</strong></td>
+						<td>array</td>
+						<td>The identifiers or song objects of the songs as they should appear within the set.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>One of two results will be returned:</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>success</strong></td>
+						<td>object</td>
+						<td>The operation was successful and basic set information is returned.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>error</strong></td>
+						<td>string</td>
+						<td>The operation has failed and text indicating the error is returned.</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Response example</h4>
+			<p>The following is an example of a successful update:</p>
+			<pre>[
+    {
+        "success": {
+            "/sets/4246F094-AD81-4EE3-B446-2C48AC88DF87/songs": [
+                "D3E86FCD-356A-48A1-AC31-B0B6FC12F025"
+            ]
+        }
+    }
+]</pre>
+
+			<h3>Delete songs</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/sets/&lt;set_identifier&gt;/songs</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>DELETE</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+			
+			<h4>Description</h4>
+			<p>Removes the specified songs from the set if the set already contains the songs.</p>
+
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>set_identifier</strong></td>
+						<td>string</td>
+						<td>The identifier of the set.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Body arguments</h4>
+			<p>The body can contain a single identifier as a string, an array of identifiers or song objects, or an object containing the following:</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>songs</strong></td>
+						<td>array</td>
+						<td>The identifiers or song objects of the songs as they should appear within the set.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>One of two results will be returned:</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>success</strong></td>
+						<td>object</td>
+						<td>The operation was successful and basic set information is returned.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>error</strong></td>
+						<td>string</td>
+						<td>The operation has failed and text indicating the error is returned.</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Response example</h4>
+			<p>The following is an example of a successful update:</p>
+			<pre>[
+    {
+        "success": {
+            "/sets/4246F094-AD81-4EE3-B446-2C48AC88DF87/songs": [
+                "D3E86FCD-356A-48A1-AC31-B0B6FC12F025"
+            ]
+        }
+    }
+]</pre>
+
+		</div>
+	</body>
+	<script src="../assets/scripts/default.js"></script>
+</html>

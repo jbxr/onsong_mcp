@@ -1,0 +1,116 @@
+<html>
+	<head>
+		<title>OnSong API: Conversion</title>
+		<link rel="stylesheet" type="text/css" href="../assets/styles/default.css"/>
+	</head>
+	<body>
+		<header>
+			<div id="logo"/>
+		</header>
+		<div id="content">
+			<h2>Conversion</h3>
+			<p>The conversion API allows files to be uploaded to the device for conversion into text.</p>
+
+			<h3>Convert uploaded file</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/convert</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>POST</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+	
+			<h4>Description</h4>
+			<p>Calling this method starts the conversion process for the uploaded files.</p>
+
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>Returns an object with either a success or error property. If successful, an array of identifiers are returned for each file that has begun conversion  Call the GET method below to retrieve the converted content after a few moments.</p>
+
+			<h4>Response example</h4>
+			<pre>{
+  "success" : true,
+  "identifiers" : [
+    "3BCC12BB-ABAB-47C9-9DF1-F5F4F6B792AB"
+  ]
+}</pre>
+			
+			<h3>Retrieve converted file</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/convert/&lt;conversion_identifier&gt;</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>GET</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+	
+			<h4>Description</h4>
+			<p>Retrieves the converted text content from an uploaded file using an identifier.</p>
+
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>conversion_identifier</strong></td>
+						<td>string</td>
+						<td>The identifier returned by the conversion upload process.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Query arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>keep</strong></td>
+						<td>boolean</td>
+						<td>Determines if the converted file should be kept for future access. Default is false.</td>
+						<td>Optional</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>Returns the content of the converted file. If the keep query parameter is not set or set to true, the file is immediately deleted after accessed.  If there is an error, it is returned as an error property on an object containing a description of the error.</p>
+		</div>
+	</body>
+	<script src="../assets/scripts/default.js"></script>
+</html>

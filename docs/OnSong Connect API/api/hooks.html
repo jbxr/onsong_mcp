@@ -1,0 +1,269 @@
+<html>
+	<head>
+		<title>OnSong API: Web Hooks</title>
+		<link rel="stylesheet" type="text/css" href="../assets/styles/default.css"/>
+	</head>
+	<body>
+		<header>
+			<div id="logo"/>
+		</header>
+		<div id="content">
+			<h2>Hooks</h3>
+			<p>Hooks allow other apps and programs to be notified when actions occur within the OnSong app.</p>
+
+			<h3>List hooks</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/hooks</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>GET</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+	
+			<h4>Description</h4>
+			<p>Lists current hooks managed by this OnSong instance.</p>
+
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>Returns an array of hooks that will be called when actions are performed.</p>
+			
+			<h4>Response example</h4>
+			<pre>[
+  {
+    "name" : "Stage iPad",
+    "endpoint" : "http://10.1.0.100/api/&lt;auth_token&gt;/hooks"
+  },
+  {
+    "name" : "Soundroom Projection",
+    "endpoint" : "http://10.1.0.234/another/app/onsong/hooks"
+  }
+]</pre>
+
+			<h3>Create hook</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/hooks</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>PUT</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+	
+			<h4>Description</h4>
+			<p>Creates a new hook which will be called when an event occurs within the API's instance of OnSong.</p>
+
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Body arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>name</strong></td>
+						<td>string</td>
+						<td>The name of the device or service that will be added. This is usually the name of the device and app requesting access.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>endpoint</strong></td>
+						<td>url</td>
+						<td>This is the URL where OnSong will POST change information for the API's instance of OnSong.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>model</strong></td>
+						<td>string</td>
+						<td>The model of the device that is being registered.</td>
+						<td>Optional</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>Returns a basic response code to determine the success or failure of the operation.</p>
+			
+			<h4>Response example</h4>
+			<pre>{
+  "success" : {
+    "name" : "Soundroom Projection", 
+    "endpoint" : "http://10.1.0.234/another/app/onsong/hooks"
+  }
+}</pre>
+
+			<h3>Call hook</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/hooks</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>POST</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+	
+			<h4>Description</h4>
+			<p>This method receives any events from the API's OnSong instance and forwards them to the proper notifications.</p>
+
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Body arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>name</strong></td>
+						<td>string</td>
+						<td>The name of the notification send from the OnSong instance.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>userInfo</strong></td>
+						<td>object</td>
+						<td>This is an object containing specific information about the forwarded event.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Body example</h4>
+			<pre>{
+  "name" : "SectionWasAdjusted",
+  "userInfo" : {
+    "amount" : 0.3333
+  }
+}</pre>
+
+			<h4>Response</h4>
+			<p>Returns a basic response code to determine the success or failure of the operation.</p>
+			
+			<h4>Response example</h4>
+			<pre>{
+  "success" : "Hook has been registered"
+}</pre>
+
+			<h3>Delete hook</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/hooks</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>DELETE</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+	
+			<h4>Description</h4>
+			<p>This method deletes the specified hook.</p>
+
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Body arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>endpoint</strong></td>
+						<td>string</td>
+						<td>The endpoint to be removed from the OnSong instance. This will prevent further notifications from being forwarded.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Body example</h4>
+			<pre>{
+  "endpoint" : "http://10.1.0.234/another/app/onsong/hooks"
+}</pre>
+
+			<h4>Response</h4>
+			<p>Returns a basic response code to determine the success or failure of the operation.</p>
+			
+			<h4>Response example</h4>
+			<pre>{
+  "success" : "Hook deleted"
+}</pre>
+		</div>
+	</body>
+	<script src="../assets/scripts/default.js"></script>
+</html>

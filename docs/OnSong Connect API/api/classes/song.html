@@ -1,0 +1,370 @@
+<html>
+	<head>
+		<title>OnSong API: Song Object</title>
+		<link rel="stylesheet" type="text/css" href="../../assets/styles/default.css"/>
+	</head>
+	<body>
+		<header>
+			<div id="logo"/>
+		</header>
+		<div id="content">
+			<h2>Song Object</h2>
+			<p>The song object contains detailed information about a song in the library.  This is used to retrieve and update song information.</p>
+			
+			<h3>Parameters</h3>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>adjustForCapo</strong></td>
+						<td>boolean</td>
+						<td>Determines if the capo value should be applied to transpose the song.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>artist</strong></td>
+						<td>string</td>
+						<td>The artist or byline of the song.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>capo</strong></td>
+						<td>int</td>
+						<td>The capo to apply to the song. Default is 0.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>chordPosition</strong></td>
+						<td>enum</td>
+						<td>
+							Determine the position of chord placement for the song:
+							<ul>
+								<li><strong>0</strong> - Above. The chords are placed above the lyrics.</li>
+								<li><strong>1</strong> - Inline. The chords are placed in line with lyrics.</li>
+							</ul>
+						</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>chords</strong></td>
+						<td>Array</td>
+						<td>Returns an array of objects that provide the preferred variations for chord diagrams.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>chordStyle</strong></td>
+						<td>enum</td>
+						<td>
+							Determines the style of chords to use such as:
+							<ul>
+								<li><strong>0</strong> - Alphabetical. This is the default style and displays chords using letters.</li>
+								<li><strong>1</strong> - Numeric. Used to display the Nashville chord notation.</li>
+								<li><strong>2</strong> - Roman. Displays chords using upper and lower case Roman numerals.</li>
+								<li><strong>3</strong> - Italian. Displays chords using do, re, mi, fa, so, la, and ti.</li>
+							</ul>
+						</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>created</strong></td>
+						<td>date</td>
+						<td>The date and time the song was originally created. Readonly.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>diagramPosition</strong></td>
+						<td>enum</td>
+						<td>
+							Determines the placement of chord diagrams when enabled using the showTablature property.
+							<ul>
+								<li><strong>0</strong> - Bottom. The chord diagrams appear at the bottom of the page.</li>
+								<li><strong>1</strong> - Top. the chord diagrams appear at the top of the song, just below the title and metadata.</li>
+							</ul>
+						</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>dualChordDisplayStyle</strong></td>
+						<td>enum</td>
+						<td>Determines if and how dual chords are displayed. This can be one of the following values:
+							<ul>
+								<li><strong>0</strong> - Off. Only the capoed chord is displayed.</li>
+								<li><strong>1</strong> - First. The capoed version of the chord is displayed first with the actual chord placed second in parenthesis.</li>
+								<li><strong>2</strong> - Second. The capoed chord is placed in parenthesis behind the actual chord.</li>
+							</ul>
+						</td>
+					</tr>
+					<tr class="even">
+						<td><strong>duration</strong></td>
+						<td>number</td>
+						<td>The duration of the song in seconds.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>favorite</strong></td>
+						<td>enum</td>
+						<td>
+							Determines if the song has been marked as favorited.
+							<ul>
+								<li><strong>0</strong> - The song is not marked as a favorite.</li>
+								<li><strong>1</strong> - The song is marked as a favorite with the presence of a star.</li>
+							</ul>
+						</td>
+					</tr>
+					<tr class="even">
+						<td><strong>ID</strong></td>
+						<td>string</td>
+						<td>The unique identifier of the song. Readonly.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>imported</strong></td>
+						<td>boolean</td>
+						<td>Determines if the song was created through an import process. Readonly.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>instrument</strong></td>
+						<td>string</td>
+						<td>The preferred instrument used for the song which effects the chord diagrams that are drawn.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>key</strong></td>
+						<td>string</td>
+						<td>The original key of the song. Readonly.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>keywords</strong></td>
+						<td>string</td>
+						<td>The keywords set for the song.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>midi</strong></td>
+						<td>string</td>
+						<td>The MIDI data associated with the song.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>modified</strong></td>
+						<td>date</td>
+						<td>The date and time the song was last modified. Readonly.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>number</strong></td>
+						<td>string</td>
+						<td>The song number applied to the song for organization.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>performTransposition</strong></td>
+						<td>boolean</td>
+						<td>Determines if transposition should be applied to the song.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>repeatMode</strong></td>
+						<td>enum</td>
+						<td>
+							Determines the audio playback repeat mode set for the song. Options include:
+							<ul>
+								<li><strong>0</strong> - Default. The users' preference for repeat mode.</li>
+								<li><strong>1</strong> - None. The song does not repeat.</li>
+								<li><strong>2</strong> - One. The current song repeats.</li>
+								<li><strong>3</strong> - All. The playlist continues to repeat.</li>
+							</ul>
+						</td>
+					</tr>
+					<tr class="even">
+						<td><strong>restrictions</strong></td>
+						<td>int</td>
+						<td>The bitwise mask used to determine the restrictions placed on the song.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>showChords</strong></td>
+						<td>boolean</td>
+						<td>Determines if the song's chords are displayed.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>showExpanded</strong></td>
+						<td>boolean</td>
+						<td>Determines if the song should be expanded according to it's flow.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>showLyrics</strong></td>
+						<td>boolean</td>
+						<td>Determines if the song's lyrics are displayed.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>showMetadata</strong></td>
+						<td>boolean</td>
+						<td>Determines if the metadata of the song is displayed.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>showNotes</strong></td>
+						<td>boolean</td>
+						<td>Determines if sticky notes are displayed.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>showTablature</strong></td>
+						<td>boolean</td>
+						<td>Determines if the chord diagrams are displayed.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>showTitle</strong></td>
+						<td>boolean</td>
+						<td>Determines if the song title is displayed.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>stickyNotes</strong></td>
+						<td>array</td>
+						<td>Contains an array of sticky notes to be applied to the page.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>styles</strong></td>
+						<td>object</td>
+						<td>Contains the basic stylization characteristics of the song. See <a href="styles.html">Styles Object</a> for details.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>tablatureSize</strong></td>
+						<td>number</td>
+						<td>The size of the chord diagrams as a percentage of the width of the page.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>tempo</strong></td>
+						<td>number</td>
+						<td>The tempo of the song in beats per minute (BPM)</td>
+					</tr>
+					<tr class="even">
+						<td><strong>timeSignature</strong></td>
+						<td>string</td>
+						<td>The time signature of the song as expressed like "3/4".</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>title</strong></td>
+						<td>string</td>
+						<td>The title of the song.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>transposedKey</strong></td>
+						<td>string</td>
+						<td>The key to which the song should be transposed into.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>usefile</strong></td>
+						<td>boolean</td>
+						<td>Determines if an external file should be used in the display of the song.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>user</strong></td>
+						<td>string</td>
+						<td>The unique identifier of the user who created the song. Readonly.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>zoomPointX</strong></td>
+						<td>number</td>
+						<td>The X-position of the song when zoom/position remembering is enabled.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>zoomPointY</strong></td>
+						<td>number</td>
+						<td>The Y-position of the song when zoom/position remembering is enabled.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>zoomScale</strong></td>
+						<td>number</td>
+						<td>The current zoom scale of the song when zoom/position remembering is enabled.</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h3>Example</h3>
+			<pre>{
+    "dualChordDisplayStyle": 0,
+    "diagramPosition": 0,
+    "chordPosition": 0,
+    "chordStyle": 0,
+    "favorite": 0,
+    "zoomPointY": 0,
+    "showNotes": true,
+    "keywords": "",
+    "adjustForCapo": true,
+    "showLyrics": true,
+    "zoomScale": 1,
+    "copyright": "2012 Hillsong Music Publishing (Admin. by EMI Christian Music Publishing)",
+    "chords": [
+        {
+            "chord": "Bm7",
+            "variation": "x20202"
+        },
+        {
+            "chord": "A/C#",
+            "variation": "002220"
+        },
+        {
+            "chord": "D",
+            "variation": "x00232"
+        },
+        {
+            "chord": "A",
+            "variation": "002220"
+        },
+        {
+            "chord": "G",
+            "variation": "320003"
+        },
+        {
+            "chord": "Asus",
+            "variation": "002230"
+        },
+        {
+            "chord": "Bm",
+            "variation": "224432"
+        },
+        {
+            "chord": "Dsus",
+            "variation": "xx0233"
+        },
+        {
+            "chord": "Em",
+            "variation": "022000"
+        }
+    ],
+    "key": "D",
+    "ccli": "6428767",
+    "imported": true,
+    "showExpanded": true,
+    "repeatMode": 1,
+    "transposedKey": "D",
+    "instrument": "guitar",
+    "showMetadata": true,
+    "performTransposition": true,
+    "showTitle": true,
+    "user": "ECF80040-9B21-47A8-AEC7-8E6518F42F88",
+    "restrictions": 436,
+    "tablatureSize": 0.16666,
+    "showChords": true,
+    "ID": "8FB10FA8-4378-4DF2-BCC2-5990BF3B9763",
+    "modified": "2014-07-04T23:47:20-04:00",
+    "zoomPointX": 0,
+    "styles": {
+        "monospacedFontColor": "000000",
+        "fontSize": 14,
+        "chordFontName": "Helvetica",
+        "headerFontColor": "000000",
+        "fontName": "Helvetica",
+        "fontColor": "000000",
+        "headerFontSize": 21,
+        "lineSpacing": 1,
+        "metadataFontName": "Helvetica",
+        "monospacedFontName": "Courier",
+        "monospacedFontSize": 14,
+        "chordFontColor": "000000",
+        "metadataFontColor": "000000",
+        "headerFontName": "Helvetica-Bold",
+        "highlightColor": "FFFFFF",
+        "chordFontSize": 14,
+        "metadataFontSize": 14
+    },
+    "usefile": false,
+    "created": "2014-07-04T23:47:20-04:00",
+    "artist": "Hillsong United",
+    "showTablature": false,
+    "title": "Oceans (Where Feet May Fail)",
+    "stickyNotes": []
+}</pre>
+		</div>
+	</body>
+	<script src="../../assets/scripts/default.js"></script>
+</html>

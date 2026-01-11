@@ -1,0 +1,112 @@
+<html>
+	<head>
+		<title>OnSong API: State Object</title>
+		<link rel="stylesheet" type="text/css" href="../../assets/styles/default.css"/>
+	</head>
+	<body>
+		<header>
+			<div id="logo"/>
+		</header>
+		<div id="content">
+			<h2>State Object</h2>
+			<p>The state object contains detailed information about the state of the host OnSong app.  This is used to retrieve and update the state.</p>
+			
+			<h3>Parameters</h3>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>song</strong></td>
+						<td>object</td>
+						<td>
+							The song that is currently being viewed.
+							<ul>
+								<li><strong>ID</strong> The unique identifier of the song.</li>
+								<li><strong>title</strong> The title of the song.</li>
+								<li><strong>artist</strong> The artist or byline information of the song.</li>
+								<li><strong>key</strong> The current key of the song.</li>
+								<li><strong>favorite</strong> Determines if the song has been favorited.</li>
+								<li><strong>usefile</strong> Determines if the external file should be used for displaying the song.</li>
+							</ul>
+						</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="even">
+						<td><strong>set</strong></td>
+						<td>object</td>
+						<td>The set that is currently being viewed. This is a <a href="set.html">Set Object</a>.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>book</strong></td>
+						<td>string</td>
+						<td>The name of the currently selected book. If "All Songs" is selected, the value "all" is returned.  If "Unbound Songs" is selected, the value "unbound" is returned.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="even">
+						<td><strong>position</strong></td>
+						<td>number</td>
+						<td>The current scroll position of the current song from 0-100% expressed as a floating point number.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>section</strong></td>
+						<td>int</td>
+						<td>The current section of the song expressed as an integer value.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="even">
+						<td><strong>autoScroll</strong></td>
+						<td>boolean</td>
+						<td>Determines if autoscroll is currently enabled.</td>
+						<td>Optional</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h3>Example</h3>
+			<pre>{
+  "set" : {
+    "orderIndex" : 0,
+    "modified" : "2010-06-20T17:14:58-04:00",
+    "user" : "87b7d2eededcd0f408ee4de1bfe8f42b300e47d6",
+    "quantity" : 1,
+    "songs" : [
+      {
+        "ID" : "welcome_to_onsong",
+        "title" : "Welcome To OnSong",
+        "usefile" : false,
+        "favorite" : 1,
+        "key" : "",
+        "artist" : "OnSong Team"
+      }
+    ],
+    "created" : "1969-12-31T19:00:00-05:00",
+    "ID" : "welcome_to_song",
+    "title" : "Welcome"
+  },
+  "position" : 0,
+  "section" : 0,
+  "autoScroll" : false,
+  "book" : "all",
+  "song" : {
+    "ID" : "welcome_to_onsong",
+    "title" : "Welcome To OnSong",
+    "usefile" : false,
+    "favorite" : 1,
+    "key" : "",
+    "artist" : "OnSong Team"
+  }
+}</pre>
+
+		</div>
+	</body>
+	<script src="../../assets/scripts/default.js"></script>
+</html>

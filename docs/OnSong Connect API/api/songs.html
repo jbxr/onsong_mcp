@@ -1,0 +1,1086 @@
+<html>
+	<head>
+		<title>OnSong API: Songs</title>
+		<link rel="stylesheet" type="text/css" href="../assets/styles/default.css"/>
+	</head>
+	<body>
+		<header>
+			<div id="logo"/>
+		</header>
+		<div id="content">
+			<h2>Songs</h2>
+			<p>The songs API is used to find and view song information.</p>
+
+			<h3>Find songs</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/songs</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>GET</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+	
+			<h4>Description</h4>
+			<p>Finds and lists songs in your OnSong library.</p>
+			
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Query arguments</h4>
+			<p>Options for searching are passed via the query string as follows:</p>
+			<p style="margin-bottom:1em;">
+				<code>/api/&lt;auth_token&gt;/songs?q=welcome&amp;limit=10&amp;sort=title</code>
+			</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>q</strong></td>
+						<td>string</td>
+						<td>The keyword query to look up songs. The API searches song title, artist, keywords and lyrics e.g. "love"</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="even">
+						<td><strong>title</strong></td>
+						<td>string</td>
+						<td>The song title (full or partial) of the songs to retrieve e.g. "Rambl"</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>artist</strong></td>
+						<td>string</td>
+						<td>The artist (full or partial) of the songs to retrieve e.g. "Beatles"</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="even">
+						<td><strong>key</strong></td>
+						<td>string</td>
+						<td>The key of the songs to retrieve e.g. "Am"</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>topic</strong></td>
+						<td>string</td>
+						<td>The topic/keyword of the songs to retrieve e.g. "Country"</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="even">
+						<td><strong>set</strong></td>
+						<td>string</td>
+						<td>The unique identifier of a set for which songs are returned e.g. "41FEEEA9-EA9A-4AA0-9CD2-000E551E3540"</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>book</strong></td>
+						<td>string</td>
+						<td>The name of the book used to limit returned songs.<br/>Use the special names "all", "bound" or "unbound" to return all songs, songs that are bound to any book, or songs not bound in a book.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="even">
+						<td><strong>sort</strong></td>
+						<td>string</td>
+						<td>
+							The sort method to use when returning songs. Options include: 
+							<ul>
+								<li><strong>title</strong> sorts the songs by song title. Default.</li>
+								<li><strong>artist</strong> sorts the songs by the artist.</li>
+								<li><strong>favorite</strong> sorts the songs is the song is marked as a favorite. Defaults to descending order.</li>
+								<li><strong>added</strong> sorts the songs by the date the song was added. Defaults to descending order.</li>
+								<li><strong>updated</strong> sorts the songs by the date the song was updated. Defaults to descending order.</li>
+								<li><strong>number</strong> sorts the songs by the song number.</li>
+								<li><strong>random</strong> sorts the songs in random order.</li>
+								<li><strong>orderIndex</strong> sorts the songs by their order in a set.</li>
+								<li><strong>lastPlayed</strong> sorts the songs by date they were last played. Defaults to descending order.</li>
+								<li><strong>mostPopular</strong> sorts the songs by how often it has been placed in a set. Defaults to descending order.</li>
+							</ul>
+						</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>descending</strong></td>
+						<td>boolean</td>
+						<td>Determines if songs should be returned in descending order. The default order is set by the sort method.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="even">
+						<td><strong>limit</strong></td>
+						<td>number</td>
+						<td>Limits the number of results returned. Default is 100.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>start</strong></td>
+						<td>number</td>
+						<td>Offsets the start of returned results to be used for paging through results. Default is 0.</td>
+						<td>Optional</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Response</h4>
+			<p>Returns a list of songs in the OnSong library including the song's unique identifier, title and other basic information.</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>count</strong></td>
+						<td>int</td>
+						<td>The total number of results that are returned, independent of limit and start.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>results</strong></td>
+						<td>array</td>
+						<td>
+							Returns a list of song objects which include the song ID, title, artist, key, key, favorite and usefile.
+							<ul>
+								<li><strong>ID</strong> The unique identifier of the song.</li>
+								<li><strong>title</strong> The title of the song.</li>
+								<li><strong>artist</strong> The artist or byline information of the song.</li>
+								<li><strong>key</strong> The current key of the song.</li>
+								<li><strong>favorite</strong> Determines if the song has been favorited.</li>
+								<li><strong>usefile</strong> Determines if the external file should be used for displaying the song.</li>
+							</ul>
+						</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>attributes</strong></td>
+						<td>object</td>
+						<td>Contains the query attributes that were passed.</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Response example</h4>
+			<pre>{
+  "count" : 4,
+  "results" : [
+    {
+      "ID" : "54AD9D08-69F0-49E7-9086-247B9F70457F",
+      "title" : "How He Loves",
+      "favorite" : 0,
+      "usefile" : false,
+      "key" : "C",
+      "artist" : "David Crowder Band"
+    },
+    {
+      "ID" : "D3368162-FBC0-4D2F-B2BA-709ADE2DEB9A",
+      "title" : "One Thing Remains",
+      "favorite" : 0,
+      "usefile" : false,
+      "key" : "G",
+      "artist" : "Jesus Culture"
+    }
+  ],
+  "attributes" : {
+    "q" : "love",
+    "start" : "1",
+    "limit" : "2"
+  }
+}</pre>
+
+			<h3>Create song</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/songs</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>PUT</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+			
+			<h4>Description</h4>
+			<p>Updates song information that has been posted.</p>
+			
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Body</h4>
+			<p>The body is a valid <a href="classes/song.html">Songs Object</a> containing detailed information about the song.</p>
+			
+			<h4>Response</h4>
+			<p>Returns an array of status updates for each property that has been updated.</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>success</strong></td>
+						<td>object</td>
+						<td>The operation was successful and basic property information is returned.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>error</strong></td>
+						<td>string</td>
+						<td>The operation has failed and text indicating the error is returned.</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Response example</h4>
+			<p>The following is an example of a successful update:</p>
+			<pre>[
+  {
+    "success" : { "/songs/new/title" : "New Title" }
+  }
+]</pre>
+			<p>The following is an example of a failed operation with a 500 status code:</p>
+			<pre>{
+  "error" : "Input must be a dictionary object"
+}</pre>
+			
+			<h3>View song</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/songs/&lt;song_identifier&gt;</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>GET</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+			
+			<h4>Description</h4>
+			<p>Retrieves song information from the OnSong library.</p>
+			
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>song_identifier</strong></td>
+						<td>string</td>
+						<td>The song identifier of the song information to be retrieved. This can be the identifier of a song, or the term "current" which is the song currently being viewed.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Query arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>with_chord_variations</strong></td>
+						<td>boolean</td>
+						<td>Determines if chord variations should be included in the response. If omitted, chord variations are included.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>The response returns a valid <a href="classes/song.html">Songs Object</a> containing detailed information about the song.</p>
+
+
+			<h3>Update song information</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/songs/&lt;song_identifier&gt;</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>POST</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+			
+			<h4>Description</h4>
+			<p>Updates song information that has been posted.</p>
+			
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>song_identifier</strong></td>
+						<td>string</td>
+						<td>The song identifier of the song information to be retrieved. This can be the identifier of a song, or the term "current" which is the song currently being viewed.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Query arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>notify</strong></td>
+						<td>boolean</td>
+						<td>Determines if a notification is sent to the app to redraw the screen. Default is TRUE.</td>
+						<td>Optional</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Body</h4>
+			<p>The body is a valid <a href="classes/song.html">Songs Object</a> containing detailed information about the song.</p>
+			
+			<h4>Response</h4>
+			<p>Returns an array of status updates for each property that has been updated.</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>success</strong></td>
+						<td>object</td>
+						<td>The operation was successful and basic property information is returned.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>error</strong></td>
+						<td>string</td>
+						<td>The operation has failed and text indicating the error is returned.</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Response example</h4>
+			<p>The following is an example of a successful update:</p>
+			<pre>[
+  {
+    "success" : { "/songs/837BB846-F374-4369-86ED-2A1A08EE131B/title" : "New Title" }
+  }
+]</pre>
+			<p>The following is an example of a failed operation with a 500 status code:</p>
+			<pre>{
+  "error" : "Input must be a dictionary object"
+}</pre>
+
+			<h3>Delete song</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/songs/&lt;song_identifier&gt;</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>DELETE</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+			
+			<h4>Description</h4>
+			<p>Deletes a set from your library.</p>
+			
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>song_identifier</strong></td>
+						<td>string</td>
+						<td>The identifier of the song to be deleted, or the term "current" to delete the currently viewed song.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>success</strong></td>
+						<td>object</td>
+						<td>The operation was successful and basic set information is returned.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>error</strong></td>
+						<td>string</td>
+						<td>The operation has failed and text indicating the error is returned.</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Response example</h4>
+			<p>The following is an example of a successful deletion:</p>
+			<pre>{
+  "success" : { "ID" : "837BB846-F374-4369-86ED-2A1A08EE131B", "title" : "Deleted Song" }
+}</pre>
+			<p>The following is an example of a failed operation with a 500 status code:</p>
+			<pre>{
+  "error" : "No song found"
+}</pre>
+
+			<h3>Retrieve content</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/songs/&lt;song_identifier&gt;/content(.&lt;format&gt;)</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>GET</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+			
+			<h4>Description</h4>
+			<p>Retrieves the content of the song in various formats.</p>
+
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>song_identifier</strong></td>
+						<td>string</td>
+						<td>The song identifier for which content will be retrieved.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>format</strong></td>
+						<td>string</td>
+						<td>The format to use when returning content. Options include:
+							<ul>
+								<li><strong>default</strong> when no format is specified, the content is returned straight from the OnSong library.</li>
+								<li><strong>onsong</strong> returns the song in the OnSong file format.</li>
+								<li><strong>chordpro</strong> returns the song formatted using the ChordPro syntax.</li>
+								<li><strong>txt</strong> returns the song as plain text.</li>
+								<li><strong>html</strong> returns the song in an HTML format.</li>
+								<li><strong>pdf</strong> returns the song as a formatted PDF file.</li>
+								<li><strong>opensong</strong> returns the song in the OpenSong XML file format.</li>
+								<li><strong>usr</strong> returns the song in the SongSelect USR file format.</li>
+								<li><strong>archive</strong> returns the song in the OnSong archive format.</li>
+							</ul>
+						</td>
+						<td>Optional</td>
+					</tr>
+				</tbody>
+			</table>
+			<h4>Query arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>download</strong></td>
+						<td>boolean</td>
+						<td>Determines if the file should be forced to download.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="even">
+						<td><strong>lyrics_only</strong></td>
+						<td>boolean</td>
+						<td>Determines if the chords should be ommited from the output.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>original_key</strong></td>
+						<td>boolean</td>
+						<td>Determines if the song should be outputted in it's original key.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="even">
+						<td><strong>translate_chords</strong></td>
+						<td>boolean</td>
+						<td>Determines if plain text files should be translated into bracketed chords.</td>
+						<td>Optional</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>Returns the specified content, setting the filename as the title of the song with the appropriate file extension.</p>
+
+
+			<h3>Update content</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/songs/&lt;song_identifier&gt;/content</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>POST</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+
+			<h4>Description</h4>
+			<p>Updates the content of the song. This will also update the song information so you will need to retrieve song information after this operation.</p>
+
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>song_identifier</strong></td>
+						<td>string</td>
+						<td>The song identifier for which content will be retrieved.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Query arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>notify</strong></td>
+						<td>boolean</td>
+						<td>Determines if a notification is sent to the app to redraw the screen. Default is TRUE.</td>
+						<td>Optional</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Body</h4>
+			<p>The body of the POST request must contain the full text of the content of the song in a valid format such as OnSong or ChordPro.</p>
+
+			<h4>Response</h4>
+			<p>One of two results will be returned:</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>success</strong></td>
+						<td>object</td>
+						<td>The operation was successful and basic song information is returned.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>error</strong></td>
+						<td>string</td>
+						<td>The operation has failed and text indicating the error is returned.</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Response example</h4>
+			<p>The following is an example of a successful update:</p>
+			<pre>{
+  "success" : {
+    "ID" : "837BB846-F374-4369-86ED-2A1A08EE131B", 
+    "title" : "Oceans (Where Feet May Fail)"
+  }
+}</pre>
+			<p>The following is an example of a failed update with a 404 status code:</p>
+			<pre>{
+  "error" : "Song not found"
+}</pre>
+
+			<h3>Retrieve external file</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/songs/&lt;song_identifier&gt;/file</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>GET</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+			
+			<h4>Description</h4>
+			<p>Retrieves the external file associated with the song.</p>
+
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>song_identifier</strong></td>
+						<td>string</td>
+						<td>The song identifier for which content will be retrieved.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>Returns the external file as an attachment with the file's imported filename. If an error occurs, the API returns an error as a JSON-formatted object with a 404 status code as follows: </p>
+			<pre>{
+  "error" : "File not found"
+}</pre>
+
+
+			<h3>Retrieve sections</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/songs/&lt;song_identifier&gt;/sections</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>GET</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+			
+			<h4>Description</h4>
+			<p>Retrieves the external file associated with the song.</p>
+
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>song_identifier</strong></td>
+						<td>string</td>
+						<td>The song identifier for which content will be retrieved or the term "current" to retrieve the currently viewed song.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Query arguments</h4>
+			<p>Options for returning song section are passed via the query string as follows:</p>
+			<p style="margin-bottom:1em;">
+				<code>/api/&lt;auth_token&gt;/songs/&lt;song_identifier&gt;/sections?with_sections=true&amp;with_chords=false</code>
+			</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>with_chords</strong></td>
+						<td>boolean</td>
+						<td>Includes chords in the section. Chords will be added inline with lyrics surrounded by square brackets.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="even">
+						<td><strong>with_transposition</strong></td>
+						<td>boolean</td>
+						<td>Determines if chords should be transposed.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>with_flow</strong></td>
+						<td>boolean</td>
+						<td>Determines if the sections should be arranged according to the flow attribute.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="even">
+						<td><strong>with_formatting</strong></td>
+						<td>boolean</td>
+						<td>Determines if line formatting information should be outputted.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>with_metadata</strong></td>
+						<td>boolean</td>
+						<td>Determines if metadata, the first section of the song, should be outputted.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="even">
+						<td><strong>with_sections</strong></td>
+						<td>boolean</td>
+						<td>Determines if the sections should be divided by the section labels.</td>
+						<td>Optional</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>Returns a list of the sections in the song. This may be either an array of strings or an array of objects depending if the <strong>with_sections</strong> is set to true.</p>
+			<pre>[
+    {
+        "label": "Verse 1:",
+        "sections": [
+            "to get started with OnSong, tap \"Songs\"\nyou can use this to manage your music\ndon't forget you can swipe left to right\nand simply delete songs you don't like"
+        ]
+    },
+    {
+        "label": "Chorus:",
+        "sections": [
+            "tap the gear icon all the way to the right\nand get help on any topic you need\nor tap the sliders icon almost to the right\nand change how your song looks"
+        ]
+    },
+    {
+        "label": "try out the other menubar options",
+        "sections": [
+            "and see all that you can do\nlike editing and playing songs\nor sharing music with your band"
+        ]
+    },
+    {
+        "label": "Verse 2:",
+        "sections": [
+            "to navigate, just swipe or tap\nleft or right or up or down\nscroll anywhere you want to go\ntap in the middle for full screen"
+        ]
+    }
+]</pre>
+
+
+			<h3>Import songs</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/songs/import</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>POST</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+
+			<h4>Description</h4>
+			<p>Uploads one or more files to the OnSong library to be imported.</p>
+
+			<h4>Body</h4>
+			<p>Upload one or more files using one or more files in a multipart form data. In HTML you can do this with the following code:</p>
+			<pre>&lt;form action="/api/&lt;auth_token&gt;/songs/import" method="post" enctype="multipart/form-data"&gt;
+  &lt;input type="file" name="file1"/&gt;
+  &lt;input type="file" name="file2"/&gt;
+  &lt;input type="submit" value="Import"/&gt;
+&lt;/form&gt;</pre>
+
+			<h4>Response</h4>
+			<p>Returns an array of songs that have been successfully imported.</p>
+			
+			<h4>Response example</h4>
+			<pre>[
+  {
+    "ID" : "837BB846-F374-4369-86ED-2A1A08EE131C",
+    "title" : @"New Song"
+  },
+  {
+    "ID" : "837BB846-F374-4369-86ED-2A1A08EE131D",
+    "title" : @"Another Song"
+  }
+]</pre>
+
+			<h3>Convert song</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/songs/&lt;song_identifier&gt;/convert</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>GET</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+
+			<h4>Description</h4>
+			<p>Converts the existing imported file into converted text.</p>
+
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>song_identifier</strong></td>
+						<td>string</td>
+						<td>The song identifier for the song to be converted. Use the value of "current" to convert the currently viewed song.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>Returns success or error to indicate if the conversion process was successfully started. Check the song again or subscribe to changes to the library to determine when the conversion process is completed.</p>
+			
+			<h3>Chord variations</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/songs/&lt;song_identifier&gt;/chords</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>GET</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+			
+			<h4>Description</h4>
+			<p>Retrieves chord variations for the specific song.</p>
+			
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>song_identifier</strong></td>
+						<td>string</td>
+						<td>The song identifier of the song for which chords are to be retrieved. This can be the identifier of a song, or the term "current" which is the song currently being viewed.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Response</h4>
+			<p>The response returns an array of dictionary objects that contain the chord name, variation and optional fingerings.</p>
+			
+			<h4>Response example</h4>
+			<pre>[
+    {
+        "preferred": true,
+        "chord": "D",
+        "variation": "2002"
+    },
+    {
+        "preferred": true,
+        "chord": "A",
+        "variation": "2245"
+    },
+    {
+        "preferred": true,
+        "chord": "G",
+        "variation": "0023"
+    },
+    {
+        "preferred": true,
+        "chord": "Em",
+        "variation": "0223"
+    }
+]</pre>
+
+			<h3>Custom chord variations</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/songs/&lt;song_identifier&gt;/chords</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>POST</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+			
+			<h4>Description</h4>
+			<p>Retrieves chord variations for the specific song.</p>
+			
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>song_identifier</strong></td>
+						<td>string</td>
+						<td>The song identifier of the song for which chords are to be retrieved. This can be the identifier of a song, or the term "current" which is the song currently being viewed.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Body arguments</h4>
+			<p>Pass information to this method to customize the instrument and chords to be returned. If either is omitted, the default instrument and list of chords are returned for the song.</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>instrument</strong></td>
+						<td>string</td>
+						<td>The identifier of the instrument for which chords are to be returned.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="even">
+						<td><strong>chords</strong></td>
+						<td>array</td>
+						<td>An array of chord names to be returned.</td>
+						<td>Optional</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Body example</h4>
+			<pre>{
+	instrument:"guitar",
+	chords:["Am", "C", "F", "Em"]
+}</pre>
+
+			<h4>2.13.5. Response</h4>
+			<p>The response returns the instrument and chords in a dictionary.  The chords property is an array of dictionary objects that contain the chord name, variation and optional fingerings.</p>
+			
+			<h4>2.13.6. Response example</h4>
+			<pre>{
+    "instrument": "guitar",
+    "chords": [
+        {
+            "preferred": true,
+            "chord": "C",
+            "variation": "032010"
+        },
+        {
+            "preferred": true,
+            "chord": "F",
+            "variation": "x03211"
+        },
+        {
+            "preferred": true,
+            "chord": "G",
+            "variation": "320003"
+        }
+    ]
+}</pre>
+		</div>
+	</body>
+	<script src="../assets/scripts/default.js"></script>	
+</html>

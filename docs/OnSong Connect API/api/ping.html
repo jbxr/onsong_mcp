@@ -1,0 +1,77 @@
+<html>
+	<head>
+		<title>OnSong API: Ping</title>
+		<link rel="stylesheet" type="text/css" href="../assets/styles/default.css"/>
+	</head>
+	<body>
+		<header>
+			<div id="logo"/>
+		</header>
+		<div id="content">
+			<h2>Ping</h3>
+			<p>The ping API can be used to check if the server is up and running.</p>
+			
+			<h3>Ping</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/ping</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>GET</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+	
+			<h4>Description</h4>
+			<p>Determines if the server is responding.  If successfully, a pong is returned with the date and time in GMT.</p>
+
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Query arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>keepalive</strong></td>
+						<td>number</td>
+						<td>The amount of time in seconds requested for the host to keep running if placed in the background.</td>
+						<td>Optional</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>
+				This call returns a pong parameter containing the date and time the pong was sent in GMT with millisecond accuracy.
+				This can be used to discover latency between devices.
+			</p>
+
+			<h4>Response example</h4>
+			<pre>{
+    "pong": "2014-09-05T15:44:50.409Z"
+}</pre>
+		</div>
+	</body>
+	<script src="../assets/scripts/default.js"></script>
+</html>

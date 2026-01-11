@@ -1,0 +1,123 @@
+<html>
+	<head>
+		<title>OnSong API: State</title>
+		<link rel="stylesheet" type="text/css" href="../assets/styles/default.css"/>
+	</head>
+	<body>
+		<header>
+			<div id="logo"/>
+		</header>
+		<div id="content">
+			<h2>State</h3>
+			<p>State represents the current view of the host OnSong app.</p>
+			
+			<h3>Check state</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/state</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>HEAD</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+	
+			<h4>Description</h4>
+			<p>Determines if the state has change since last checked. Use this method when polling the server to avoid unnecessary requests.</p>
+
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>This call contains no data. The developer should check the Last-Modified header for a change.</p>
+
+			<h3>View state</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/state</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>GET</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+	
+			<h4>Description</h4>
+			<p>Displays the current state of the host.</p>
+
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>Returns the <a href="classes/state.html">State Object</a> representing the current state of the host.</p>
+
+
+			<h3>Change state</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/state</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>POST</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+	
+			<h4>Description</h4>
+			<p>Changes the state of the host. Use for changes songs and scroll positions.</p>
+
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Body</h4>
+			<p>Include the properties of the <a href="classes/state.html">State Object</a> which you want to change.</p>
+
+			<h4>Response</h4>
+			<p>Returns an object containing the properties that were changed.</p>
+			<pre>{
+    "/state/song": "7FB03044-C4CB-4820-997F-5E0A35E144F2",
+    "/state/position": 0.75
+}</pre>
+		</div>
+	</body>
+	<script src="../assets/scripts/default.js"></script>	
+</html>

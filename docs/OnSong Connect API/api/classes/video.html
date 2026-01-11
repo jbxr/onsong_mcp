@@ -1,0 +1,237 @@
+<html>
+	<head>
+		<title>OnSong API: Video Object</title>
+		<link rel="stylesheet" type="text/css" href="../assets/styles/default.css"/>
+	</head>
+	<body>
+		<header>
+			<div id="logo"/>
+		</header>
+		<div id="content">
+			<h2>Video Settings Object</h2>
+			<p>The song object contains detailed information about a song in the library.  This is used to retrieve and update song information.</p>
+			
+			<h3>Parameters</h3>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>advanceSpeed</strong></td>
+						<td>number</td>
+						<td>The amount of time it takes to wait until the slide automatically advances to the next slide. If set to 0, no automatic advancing is performed.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>animationSpeed</strong></td>
+						<td>number</td>
+						<td>The speed of the animation between slides.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>backgroundColor</strong></td>
+						<td>string</td>
+						<td>The background color of the slide as expressed as an HTML color.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>backgroundFillMode</strong></td>
+						<td>enum</td>
+						<td>This is an enumeration that defines how the background media is rendered when it does not fit exactly. Supported values are:
+							<ul>
+								<li>
+									<u>Scale To Fill = 0</u>
+									<div>Scales the content to fit the size of itself by changing the aspect ratio of the content if necessary.</div>
+								</li>
+								<li>
+									<u>Scale Aspect Fit = 1</u>
+									<div>Scales the content to fit the size of the view by maintaining the aspect ratio. any remaining area of the view’s bounds is transparent.</div>
+								</li>
+								<li>
+									<u>Scale Aspect Fill = 2</u>
+									<div>Scales the content to fill the size of the view. some portion of the content may be clipped to fill the view’s bounds.</div>
+								</li>
+							</ul>
+						</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>blackout</strong></td>
+						<td>boolean</td>
+						<td>Determines if blackout mode is currently available.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>ccliNumber</strong></td>
+						<td>string</td>
+						<td>The CCLI number of the organization to appear in the slide footer.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>fontName</strong></td>
+						<td>string</td>
+						<td>The name of the font to use for displaying text in the slide. Default is "Verdana-Bold".</td>
+					</tr>
+					<tr class="even">
+						<td><strong>fontSize</strong></td>
+						<td>number</td>
+						<td>The size of the font in the slide in points.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>footerPosition</strong></td>
+						<td>string</td>
+						<td>Determines the position of the footer. This can be either "off", "bottom" or "top".</td>
+					</tr>
+					<tr class="even">
+						<td><strong>footerScale</strong></td>
+						<td>number</td>
+						<td>The footer font size is set to the slide font size multiplied by this value.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>foregroundColor</strong></td>
+						<td>string</td>
+						<td>The color of the slide text as expressed as an HTML color code.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>global</strong></td>
+						<td>boolean</td>
+						<td>Determines if global settings or song-specific settings should be used.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>gradientColor</strong></td>
+						<td>string</td>
+						<td>The color applied to the gradient mask image. Default is 000000.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>gradientStyle</strong></td>
+						<td>string</td>
+						<td>The only supported gradient style is currently "Fade".</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>margins</strong></td>
+						<td>Object</td>
+						<td>The margins of the slide as expressed as a percentage of the width of the slide. Properties of the object are numbers for top, left, bottom and right.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>mirrorMode</strong></td>
+						<td>boolean</td>
+						<td>Determines if stage monitor mode is currently enabled.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>mode</strong></td>
+						<td>string</td>
+						<td>The current external video mode. Options include "off", "projector" and "stage".</td>
+					</tr>
+					<tr class="even">
+						<td><strong>playbackRate</strong></td>
+						<td>number</td>
+						<td>The playback rate of motion background videos. The default value is 1.0 or normal speed.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>shadowColor</strong></td>
+						<td>string</td>
+						<td>The color of the text shadow. This is set to 0000007F by default, or a semi-translucent black.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>shadowScale</strong></td>
+						<td>number</td>
+						<td>Determines how large the shadow behind text should appear.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>showBackground</strong></td>
+						<td>boolean</td>
+						<td>Determines if the background should be displayed. If false, the color black is displayed.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>showBackgroundMedia</strong></td>
+						<td>boolean</td>
+						<td>Determines if the background image or motion video should be displayed. If turned off, the background color will be displayed.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>showGradient</strong></td>
+						<td>boolean</td>
+						<td>Determines if the gradient should be overlaid above the background media or colors.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>showLyrics</strong></td>
+						<td>boolean</td>
+						<td>Determines if the lyrics should be displayed.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>showLyrics</strong></td>
+						<td>boolean</td>
+						<td>Determines if the song's lyrics are displayed.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>song</strong></td>
+						<td>Song</td>
+						<td>Basic song information about the current song used for setting non-global properties.  This includes the song identifier, title, etc.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>strokeWidth</strong></td>
+						<td>number</td>
+						<td>The width of the stroke surrounding the text in points. Default is 1.0.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>textAlignment</strong></td>
+						<td>string</td>
+						<td>The alignment of the text in the slide. This can be either "left", "center" or "right". Default is "center".</td>
+					</tr>
+					<tr class="even">
+						<td><strong>verticalAlignment</strong></td>
+						<td>string</td>
+						<td>The vertical alignment of text in the slide. This can be either "top", "center", or "bottom".</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>wrapText</strong></td>
+						<td>string</td>
+						<td>Determines how text wrapping can be blocked. Set to "off" to allow text to wrap or "slide" to adjust the font to fit the width of the slide.</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h3>Example</h3>
+			<pre>{
+    "verticalAlignment": "center",
+    "footerScale": 0.333334,
+    "showBackground": true,
+    "playbackRate": 1,
+    "margins": {
+        "left": 0.04,
+        "top": 0.04,
+        "bottom": 0.04,
+        "right": 0.04
+    },
+    "shadowScale": 0.5,
+    "blackout": false,
+    "global": true,
+    "song": {
+        "ID": "22275A4E-38D4-4106-84C3-67F891E4C820",
+        "title": "Sample Song",
+        "usefile": false,
+        "key": "G"
+    },
+    "footerPosition": "bottom",
+    "animationSpeed": 0.5,
+    "shadowColor": "0000007F",
+    "showBackgroundMedia": false,
+    "strokeWidth": 1,
+    "backgroundColor": "000000",
+    "gradientColor": "000000",
+    "fontName": "Verdana-Bold",
+    "showLyrics": true,
+    "showGradient": true,
+    "mode": "off",
+    "fontSize": 40,
+    "advanceSpeed": 0,
+    "textAlignment": "center",
+    "gradientStyle": "Fade",
+    "mirrorMode": false,
+    "ccliNumber": null,
+    "wrapText": "slide",
+    "foregroundColor": "FFFFFF",
+    "backgroundFillMode": 2
+}</pre>
+		</div>
+	</body>
+	<script src="../../assets/scripts/default.js"></script>
+</html>

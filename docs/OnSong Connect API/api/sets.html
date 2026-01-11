@@ -1,0 +1,557 @@
+<html>
+	<head>
+		<title>OnSong API: Sets</title>
+		<link rel="stylesheet" type="text/css" href="../assets/styles/default.css"/>
+	</head>
+	<body>
+		<header>
+			<div id="logo"/>
+		</header>
+		<div id="content">
+			<h2>Sets</h2>
+			<p>Sets are used to pull songs and place in a specific order for playing events.</p>
+
+			<h3 id="api_songs">Find sets</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/sets</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>GET</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+	
+			<h4>Description</h4>
+			<p>Finds and lists sets in your OnSong library.</p>
+			
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Query arguments</h4>
+			<p>Options for searching are passed via the query string as follows:</p>
+			<p style="margin-bottom:1em;">
+				<code>/api/&lt;auth_token&gt;/sets?q=welcome&limit=10&sort=title</code>
+			</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>q</strong></td>
+						<td>string</td>
+						<td>The query to look up sets by title</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="even">
+						<td><strong>archived</strong></td>
+						<td>boolean</td>
+						<td>Determines if archived sets should be returned. If not specified, all sets are returned.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>sort</strong></td>
+						<td>string</td>
+						<td>
+							The sort method to use when returning sets. Options include: 
+							<ul>
+								<li><strong>title</strong> sorts the sets by set title. Default.</li>
+								<li><strong>date</strong> sorts the sets by the date of the set.</li>
+								<li><strong>added</strong> sorts the sets by date the set was created.</li>
+								<li><strong>quantity</strong> sorts the sets by the number of songs contained within.</li>
+							</ul>
+						</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="even">
+						<td><strong>descending</strong></td>
+						<td>boolean</td>
+						<td>Determines if sets should be returned in descending order. The default order is set by the sort method.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>limit</strong></td>
+						<td>number</td>
+						<td>Limits the number of results returned. Default is 100.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="even">
+						<td><strong>start</strong></td>
+						<td>number</td>
+						<td>Offsets the start of returned results to be used for paging through results. Default is 0.</td>
+						<td>Optional</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Response</h4>
+			<p>Returns a list of sets in the OnSong library including the set's unique identifier, title and quantity of songs in the set.</p>
+			
+			<h4>Response example</h4>
+			<pre>{
+  "attributes" : {
+    "q" : "welcome",
+    "start" : "0",
+    "limit" : "2"
+  },
+  "count" : 1,
+  "results" : [
+    {
+      "ID" : "welcome_to_song",
+      "title" : "Welcome",
+      "quantity" : 1
+    }
+  ]
+}</pre>
+
+			<h3>Create set</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/sets</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>PUT</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+			
+			<h4>Description</h4>
+			<p>Creates a new set in your library.</p>
+			
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Body arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>title</strong></td>
+						<td>string</td>
+						<td>The title of the set.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="even">
+						<td><strong>summary</strong></td>
+						<td>string</td>
+						<td>The summary of the set.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>datetime</strong></td>
+						<td>date</td>
+						<td>The date of the set. Passed as a string in the ISO8601.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="even">
+						<td><strong>expires</strong></td>
+						<td>date</td>
+						<td>The expiration date for the set to expire. Passed as a string in the ISO8601.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>songs</strong></td>
+						<td>array</td>
+						<td>An array of song identifiers in the preferred order.</td>
+						<td>Optional</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>One of two results will be returned:</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>success</strong></td>
+						<td>object</td>
+						<td>The operation was successful and basic set information is returned.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>error</strong></td>
+						<td>string</td>
+						<td>The operation has failed and text indicating the error is returned.</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Response example</h4>
+			<p>The following is an example of a successful update:</p>
+			<pre>{
+  "success" : {
+    "ID" : "837BB846-F374-4369-86ED-2A1A08EE131B", 
+    "title" : "New Set"
+    "datetime" : "2013-12-04T07:39:00+05:00"
+  }
+}</pre>
+			<p>The following is an example of a failed operation with a 500 status code:</p>
+			<pre>{
+  "error" : "Input must be a dictionary object"
+}</pre>
+
+			<h3>View set information</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/sets/&lt;set_identifier&gt;</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>GET</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+			
+			<h4>Description</h4>
+			<p>Retrieves set information from the OnSong library.</p>
+			
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>set_identifier</strong></td>
+						<td>string</td>
+						<td>The song identifier of the set information to be retrieved. This can be the identifier of a set, or the term "current" which is the set currently being viewed.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Query arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>show_songs</strong></td>
+						<td>boolean</td>
+						<td>Determines if songs should be displayed using the "songs" property.</td>
+						<td>Optional</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>Returns a <a href="classes/set.html">Set Object</a>.
+			
+			<h4>Response example</h4>
+			<p>The response does not include NULL values.</p>
+			<pre>{
+  "modified" : "2010-06-20T17:14:58-04:00",
+  "user" : "87b7d2eededcd0f408ee4de1bfe8f42b300e47d6",
+  "orderMethod" : "orderIndex",
+  "quantity" : 1,
+  "created" : "1969-12-31T19:00:00-05:00",
+  "ID" : "welcome_to_song",
+  "title" : "Welcome"
+}</pre>
+
+			<h3>Retrieve set content</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/sets/&lt;set_identifier&gt;/content(.format)</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>GET</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+			
+			<h4>Description</h4>
+			<p>Retrieves set information from the OnSong library.</p>
+			
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>set_identifier</strong></td>
+						<td>string</td>
+						<td>The identifier of the set information to be retrieved. This can be the identifier of a set, or the term "current" which is the set currently being viewed.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>format</strong></td>
+						<td>string</td>
+						<td>The format to use when returning content. Options include:
+							<ul>
+								<li><strong>default</strong> when no format is specified, the content is returned as an OnSong archive.</li>
+								<li><strong>onsong</strong> returns the set in the OnSong file format.</li>
+								<li><strong>chordpro</strong> returns the set formatted using the ChordPro syntax.</li>
+								<li><strong>txt</strong> returns the set as plain text.</li>
+								<li><strong>html</strong> returns the set in an HTML format.</li>
+								<li><strong>pdf</strong> returns the set as a formatted PDF file.</li>
+								<li><strong>opensong</strong> returns the set in the OpenSong XML file format.</li>
+								<li><strong>usr</strong> returns the set in the SongSelect USR file format.</li>
+								<li><strong>archive</strong> returns the set in the OnSong archive format.</li>
+							</ul>
+						</td>
+						<td>Optional</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Response</h4>
+			<p>Returns the content of the set.</p>
+
+			<h3>Update set</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/sets/&lt;set_identifier&gt;</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>POST</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+			
+			<h4>Description</h4>
+			<p>Updates a set in your library.</p>
+			
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Body arguments</h4>
+			<p>If arguments are not provided, no changes will be made to that set property.</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>title</strong></td>
+						<td>string</td>
+						<td>The title of the set.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="even">
+						<td><strong>summary</strong></td>
+						<td>string</td>
+						<td>The summary of the set.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>datetime</strong></td>
+						<td>date</td>
+						<td>The date of the set. Passed as a string in the ISO8601 format.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="even">
+						<td><strong>expires</strong></td>
+						<td>date</td>
+						<td>The expiration date for the set to expire. Passed as a string in the ISO8601 format.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>archived</strong></td>
+						<td>date</td>
+						<td>The date when the set is to be archived. Passed as a string in the ISO8601 format.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="even">
+						<td><strong>songs</strong></td>
+						<td>array</td>
+						<td>An array of song identifiers in the preferred order. If songs are already in the set, they are moved. Otherwise the song is loaded and added to the set.  If the song is omitted from this list, it is removed from the set.</td>
+						<td>Optional</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>Returns an array of status updates for each property that has been updated.</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>success</strong></td>
+						<td>object</td>
+						<td>The operation was successful and basic set information is returned.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>error</strong></td>
+						<td>string</td>
+						<td>The operation has failed and text indicating the error is returned.</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Response example</h4>
+			<p>The following is an example of a successful update:</p>
+			<pre>[
+  {
+    "success" : { "/sets/837BB846-F374-4369-86ED-2A1A08EE131B/title" : "New Title" }
+  },
+  {
+    "success" : { "/sets/837BB846-F374-4369-86ED-2A1A08EE131B/songs" : [ "837BB846-F374-4369-86FF-2A1A08EE131B", "837BB846-F374-4369-86FE-2A1A08EE131B" ] }
+  }
+]</pre>
+			<p>The following is an example of a failed operation with a 500 status code:</p>
+			<pre>{
+  "error" : "Input must be a dictionary object"
+}</pre>
+
+			<h3>Delete set</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/sets/&lt;set_identifier&gt;</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>DELETE</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+			
+			<h4>Description</h4>
+			<p>Deletes a set from your library.</p>
+			
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>set_identifier</strong></td>
+						<td>string</td>
+						<td>The identifier of the set to be deleted.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>success</strong></td>
+						<td>object</td>
+						<td>The operation was successful and basic set information is returned.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>error</strong></td>
+						<td>string</td>
+						<td>The operation has failed and text indicating the error is returned.</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Response example</h4>
+			<p>The following is an example of a successful deletion:</p>
+			<pre>{
+  "success" : { "ID" : "837BB846-F374-4369-86ED-2A1A08EE131B", "title" : "Deleted Set" }
+}</pre>
+			<p>The following is an example of a failed operation with a 500 status code:</p>
+			<pre>{
+  "error" : "No set found"
+}</pre>
+		</div>
+	</body>
+	<script src="../assets/scripts/default.js"></script>
+</html>

@@ -1,0 +1,471 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OnSong MCP Tools",
+  "description": "MCP tool definitions for OnSong integration",
+  "tools": [
+    {
+      "name": "onsong.discover",
+      "description": "Discover OnSong Connect servers on the local network via Bonjour/mDNS",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "timeout_ms": {
+            "type": "integer",
+            "default": 2000,
+            "minimum": 500,
+            "maximum": 30000,
+            "description": "Discovery timeout in milliseconds"
+          }
+        },
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "devices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/OnSongDevice"
+            },
+            "description": "List of discovered OnSong devices"
+          }
+        },
+        "required": ["devices"]
+      }
+    },
+    {
+      "name": "onsong.connect_test",
+      "description": "Validate that a chosen OnSong device is reachable and authenticated",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "host": {
+            "type": "string",
+            "description": "Target host IP or hostname"
+          },
+          "port": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535,
+            "description": "Target port number"
+          }
+        },
+        "required": ["host", "port"],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "description": "Connection successful"
+          },
+          "version": {
+            "type": "string",
+            "description": "OnSong app version"
+          },
+          "capabilities": {
+            "$ref": "#/$defs/Capabilities"
+          }
+        },
+        "required": ["ok"]
+      }
+    },
+    {
+      "name": "onsong.state.get",
+      "description": "Get current performance state including current song, set, and scroll position",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "$ref": "#/$defs/Target"
+          }
+        },
+        "required": ["target"],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "current_song": {
+            "$ref": "#/$defs/Song"
+          },
+          "current_set": {
+            "$ref": "#/$defs/Set"
+          },
+          "song_position": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Scroll position as percentage"
+          },
+          "mode": {
+            "type": "string",
+            "description": "Current app mode"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "State retrieval timestamp"
+          }
+        },
+        "required": ["timestamp"]
+      }
+    },
+    {
+      "name": "onsong.library.search",
+      "description": "Search songs by title, artist, or text query",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "$ref": "#/$defs/Target"
+          },
+          "query": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Search query (matches title, artist, keywords, lyrics)"
+          },
+          "limit": {
+            "type": "integer",
+            "default": 25,
+            "minimum": 1,
+            "maximum": 100,
+            "description": "Maximum results to return"
+          }
+        },
+        "required": ["target", "query"],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "songs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/SongSearchResult"
+            }
+          }
+        },
+        "required": ["songs"]
+      }
+    },
+    {
+      "name": "onsong.library.export",
+      "description": "Export songs/sets/library to local files in specified format",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "target": {
+            "$ref": "#/$defs/Target"
+          },
+          "scope": {
+            "type": "string",
+            "enum": ["song", "set", "library"],
+            "description": "Export scope"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "Song ID/name or set name to export"
+          },
+          "format": {
+            "type": "string",
+            "enum": ["onsong", "chordpro", "txt", "pdf"],
+            "description": "Output format"
+          },
+          "output_dir": {
+            "type": "string",
+            "description": "Directory path for exported files"
+          }
+        },
+        "required": ["target", "scope", "identifier", "format", "output_dir"],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "exported_files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Paths to exported files"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["exported_files"]
+      }
+    },
+    {
+      "name": "onsong.library.import",
+      "description": "Import a chart file into OnSong via URL scheme",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "file_path": {
+            "type": "string",
+            "description": "Path to chart file to import"
+          },
+          "content_base64": {
+            "type": "string",
+            "description": "Base64-encoded chart content"
+          },
+          "filename": {
+            "type": "string",
+            "description": "Filename for base64 content"
+          },
+          "destination": {
+            "type": "string",
+            "description": "Target set or collection name"
+          },
+          "open_after_import": {
+            "type": "boolean",
+            "default": false,
+            "description": "Open the song after importing"
+          }
+        },
+        "additionalProperties": false,
+        "oneOf": [
+          {
+            "required": ["file_path"]
+          },
+          {
+            "required": ["content_base64", "filename"]
+          }
+        ]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "onsong_result": {
+            "type": "string"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["ok"]
+      }
+    },
+    {
+      "name": "onsong.action.run",
+      "description": "Trigger a named OnSong action (next/previous song, scroll, pedal actions)",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action_name": {
+            "type": "string",
+            "description": "Action identifier (e.g., ForwardPedalWasPressed, BackwardPedalWasPressed)"
+          },
+          "args": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Action parameters (e.g., amount for scroll position)"
+          }
+        },
+        "required": ["action_name"],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "performed_via": {
+            "type": "string",
+            "enum": ["connect", "url_scheme"]
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["ok"]
+      }
+    },
+    {
+      "name": "onsong.open",
+      "description": "Open a specific song or set in OnSong",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["song", "set"],
+            "description": "What to open"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "Song or set name/ID"
+          }
+        },
+        "required": ["type", "identifier"],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          }
+        },
+        "required": ["ok"]
+      }
+    }
+  ],
+  "$defs": {
+    "Target": {
+      "type": "object",
+      "properties": {
+        "host": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535
+        }
+      },
+      "required": ["host", "port"]
+    },
+    "OnSongDevice": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "host": {
+          "type": "string"
+        },
+        "port": {
+          "type": "integer"
+        },
+        "addresses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "model": {
+              "type": "string"
+            },
+            "deviceId": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "role": {
+              "type": "string",
+              "enum": ["client", "server"]
+            }
+          }
+        }
+      },
+      "required": ["name", "host", "port", "addresses"]
+    },
+    "Capabilities": {
+      "type": "object",
+      "properties": {
+        "connect_state": {
+          "type": "boolean"
+        },
+        "connect_search": {
+          "type": "boolean"
+        },
+        "url_import": {
+          "type": "boolean"
+        },
+        "url_export": {
+          "type": "boolean"
+        },
+        "url_actions": {
+          "type": "boolean"
+        },
+        "url_open": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Song": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "artist": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "favorite": {
+          "type": "boolean"
+        }
+      },
+      "required": ["title"]
+    },
+    "SongSearchResult": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "artist": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "match_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["title"]
+    },
+    "Set": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "song_count": {
+          "type": "integer"
+        }
+      },
+      "required": ["name"]
+    }
+  }
+}

@@ -1,0 +1,370 @@
+<html>
+	<head>
+		<title>OnSong API: Chord Library</title>
+		<link rel="stylesheet" type="text/css" href="../assets/styles/default.css"/>
+	</head>
+	<body>
+		<header>
+			<div id="logo"/>
+		</header>
+		<div id="content">
+			<h2>Chord Library</h3>
+			<p>OnSong Connect provides access to the device's chord library as well.  This can be used for returning chord variations for different instruments.</p>
+
+			<h3> List instruments</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/instruments</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>GET</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+	
+			<h4>Description</h4>
+			<p>Returns a list of instruments supported by the device.</p>
+
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>This call returns an array of instrument objects. Instruments contain the following fields:</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>ID</strong></td>
+						<td>string</td>
+						<td>The identifier of the instrument. This should be passed to calls for more information about the instrument.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>title</strong></td>
+						<td>string</td>
+						<td>The name of the instrument.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>polyphony</strong></td>
+						<td>number</td>
+						<td>The number of notes that the instrument can play. For instance, a guitar has six strings so the polyphony is 6.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>tuning</strong></td>
+						<td>array</td>
+						<td>This returns an array describing the tuning of the instrument. Numeric values correspond with steps above the lowest key on an 88=key piano keyboard.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>soundbank</strong></td>
+						<td>boolean</td>
+						<td>Determines if a sound bank exists to playback chords using this instrument.</td>
+					</tr>
+				</tbody>
+			</table>
+			<pre>[
+    {
+        "ID": "guitar",
+        "title": "Guitar",
+        "tuning": [
+            32,
+            37,
+            42,
+            47,
+            51,
+            56
+        ],
+        "polyphony": 6,
+        "soundbank": false
+    },
+    {
+        "ID": "piano",
+        "title": "Piano",
+        "tuning": null,
+        "polyphony": 5,
+        "soundbank": false
+    }...
+]</pre>
+
+			<h3>List Chords</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/instruments/&lt;instrument_id&gt;/chords/</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>GET</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+	
+			<h4>Description</h4>
+			<p>Returns a list of available chords for the specified instrument.</p>
+
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>instrument_id</strong></td>
+						<td>string</td>
+						<td>The identifier of the instrument.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>Returns an array notes with chord variations available. Each element in the array contains the following fields:</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>key</strong></td>
+						<td>string</td>
+						<td>The root of a chord for which different forms of the chord are to be returned. For instance, C or Gb.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>chords</strong></td>
+						<td>string</td>
+						<td>The chord formations that are supported such as Cm, Csus4, Gbmaj9, etc.</td>
+					</tr>
+				</tbody>
+			</table>
+			<pre>{
+    "chords": [
+        {
+            "key": "Ab",
+            "chords": [
+                "Ab",
+                "Ab#5",
+                "Ab/A",
+                "Ab/F",
+                "Ab/Gb",
+                "Ab2/F",
+                "Ab5",
+                "Ab6",
+                "Ab7",
+                "Abaug",
+                "Abdim/E",
+                "Abdim/Eb",
+                "Abdim/F",
+                "Abdim7",
+                "Abm",
+                "Abm/D",
+                "Abm/E",
+                "Abm/Gb",
+                "Abm7",
+                "Absus",
+                "Absus4"
+            ]
+        }, ...
+    ],
+    "instrument": "guitar"
+}</pre>
+
+			<h3>Get chord variations</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/instruments/&lt;instrument_id&gt;/chords/&lt;chord_name&gt;</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>GET</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+	
+			<h4>Description</h4>
+			<p>Returns variations in the form of fret or note positions for the specified chord.</p>
+
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>instrument_id</strong></td>
+						<td>string</td>
+						<td>The identifier of the instrument.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>chord_name</strong></td>
+						<td>string</td>
+						<td>The name of the chord formation for which variations should be returned.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>Returns an object containing the variations as an array of objects containing frets and optional fingerings as well as basic information about the request.</p>
+			<pre>{
+    "alternates": false,
+    "chord": "C",
+    "instrument": "guitar",
+    "variations": [
+		{ frets: "032010" },
+        { frets: "x35550" },
+        { frets: "035553" },
+        { frets: "x32010" },
+        { frets: "3x2010" },
+        { frets: "332010" }
+    ]
+}</pre>
+			<h3>Add chord</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/instruments/&lt;instrument_id&gt;/chords/&lt;chord_name&gt;/&lt;variation&gt;</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>PUT</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+	
+			<h4>Description</h4>
+			<p>Adds a new chord variation to the chord library.</p>
+
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>instrument_id</strong></td>
+						<td>string</td>
+						<td>The identifier of the instrument.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>chord_name</strong></td>
+						<td>string</td>
+						<td>The name of the chord formation for which the variation should be added.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>variation</strong></td>
+						<td>string</td>
+						<td>The chord variation to be added to the chord library. For example, x01234</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>Returns an object with either an error or success property to indicate if the call was successful.</p>
+			<pre>{
+    "success": "Chord variation was added"
+}</pre>
+			<pre>{
+    "error": "Instrument, chord and variation are required"
+}</pre>
+
+			<h3>Delete chord</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/instruments/&lt;instrument_id&gt;/chords/&lt;chord_name&gt;/&lt;variation&gt;</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>PUT</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+	
+			<h4>Description</h4>
+			<p>Deletes a chord variation from the chord library.</p>
+
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>instrument_id</strong></td>
+						<td>string</td>
+						<td>The identifier of the instrument.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>chord_name</strong></td>
+						<td>string</td>
+						<td>The name of the chord formation from which the variation will be deleted.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>variation</strong></td>
+						<td>string</td>
+						<td>The chord variation to be deleted from the chord library. For example, x01234</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>Returns an object with either an error or success property to indicate if the call was successful.</p>
+			<pre>{
+    "success": "Chord variation was deleted"
+}</pre>
+			<pre>{
+    "error": "Instrument, chord and variation are required"
+}</pre>
+		</div>
+	</body>
+	<script src="../assets/scripts/default.js"></script>
+</html>

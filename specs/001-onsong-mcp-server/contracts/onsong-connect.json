@@ -1,0 +1,496 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OnSong Connect API",
+  "description": "Type definitions for OnSong Connect REST API interactions",
+  "definitions": {
+    "AuthResponse": {
+      "type": "object",
+      "oneOf": [
+        {
+          "properties": {
+            "success": {
+              "type": "string",
+              "enum": ["Token Registered", "Token Accepted"]
+            }
+          },
+          "required": ["success"]
+        },
+        {
+          "properties": {
+            "error": {
+              "type": "string",
+              "enum": ["Not Registered", "Invalid Token Length", "Not Accepting Users"]
+            }
+          },
+          "required": ["error"]
+        }
+      ]
+    },
+    "PingResponse": {
+      "type": "object",
+      "properties": {
+        "pong": {
+          "type": "string",
+          "description": "Timestamp of response"
+        }
+      },
+      "required": ["pong"]
+    },
+    "StateObject": {
+      "type": "object",
+      "properties": {
+        "song": {
+          "$ref": "#/definitions/SongObject"
+        },
+        "set": {
+          "$ref": "#/definitions/SetObject"
+        },
+        "book": {
+          "type": "string",
+          "description": "Current book: 'all', 'unbound', or book name"
+        },
+        "position": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Scroll position 0-100%"
+        },
+        "section": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Current section index"
+        },
+        "autoScroll": {
+          "type": "boolean",
+          "description": "Autoscroll enabled"
+        }
+      }
+    },
+    "SongObject": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string",
+          "description": "UUID identifier"
+        },
+        "title": {
+          "type": "string"
+        },
+        "artist": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "transposedKey": {
+          "type": "string"
+        },
+        "capo": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 12
+        },
+        "tempo": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "timeSignature": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "integer",
+          "description": "Duration in seconds"
+        },
+        "favorite": {
+          "type": "integer",
+          "enum": [0, 1],
+          "description": "0 = not favorite, 1 = favorite"
+        },
+        "usefile": {
+          "type": "boolean",
+          "description": "Uses external file"
+        },
+        "content": {
+          "type": "string",
+          "description": "Full chart content"
+        },
+        "keywords": {
+          "type": "string",
+          "description": "Comma-separated keywords"
+        },
+        "copyright": {
+          "type": "string"
+        },
+        "ccli": {
+          "type": "string",
+          "description": "CCLI license number"
+        }
+      },
+      "required": ["title"]
+    },
+    "SetObject": {
+      "type": "object",
+      "properties": {
+        "ID": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "archived": {
+          "type": "boolean"
+        },
+        "dateCreated": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "dateModified": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "quantity": {
+          "type": "integer",
+          "description": "Number of songs in set"
+        }
+      },
+      "required": ["name"]
+    },
+    "SongsSearchResponse": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "description": "Number of results returned"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SongObject"
+          }
+        },
+        "attributes": {
+          "type": "object",
+          "description": "Search metadata"
+        }
+      },
+      "required": ["count", "results"]
+    },
+    "SetsListResponse": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SetObject"
+          }
+        }
+      },
+      "required": ["count", "results"]
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string"
+        }
+      },
+      "required": ["error"]
+    },
+    "SuccessResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": ["string", "boolean", "object"]
+        }
+      },
+      "required": ["success"]
+    },
+    "WebhookRegistration": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Device name for identification"
+        },
+        "endpoint": {
+          "type": "string",
+          "format": "uri",
+          "description": "Callback URL for events"
+        },
+        "model": {
+          "type": "string",
+          "description": "Optional device model"
+        }
+      },
+      "required": ["endpoint"]
+    },
+    "WebhookEvent": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Event name (e.g., SectionWasAdjusted)"
+        },
+        "userInfo": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Event-specific data"
+        }
+      },
+      "required": ["name"]
+    }
+  },
+  "endpoints": {
+    "/api/{token}/auth": {
+      "GET": {
+        "description": "Check if token is registered",
+        "response": {
+          "$ref": "#/definitions/AuthResponse"
+        }
+      },
+      "PUT": {
+        "description": "Register authentication token",
+        "body": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          }
+        },
+        "response": {
+          "$ref": "#/definitions/AuthResponse"
+        }
+      },
+      "DELETE": {
+        "description": "Remove token from allowlist",
+        "response": {
+          "$ref": "#/definitions/SuccessResponse"
+        }
+      }
+    },
+    "/api/{token}/ping": {
+      "GET": {
+        "description": "Health check",
+        "queryParams": {
+          "keepalive": {
+            "type": "integer",
+            "description": "Seconds to keep server running"
+          }
+        },
+        "response": {
+          "$ref": "#/definitions/PingResponse"
+        }
+      }
+    },
+    "/api/{token}/state": {
+      "HEAD": {
+        "description": "Check state change via Last-Modified header"
+      },
+      "GET": {
+        "description": "Get current performance state",
+        "response": {
+          "$ref": "#/definitions/StateObject"
+        }
+      },
+      "POST": {
+        "description": "Update state (change song, position, etc.)",
+        "body": {
+          "$ref": "#/definitions/StateObject"
+        },
+        "response": {
+          "$ref": "#/definitions/SuccessResponse"
+        }
+      }
+    },
+    "/api/{token}/songs": {
+      "GET": {
+        "description": "Search/list songs",
+        "queryParams": {
+          "q": {
+            "type": "string",
+            "description": "Keyword search"
+          },
+          "title": {
+            "type": "string"
+          },
+          "artist": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "topic": {
+            "type": "string"
+          },
+          "set": {
+            "type": "string"
+          },
+          "book": {
+            "type": "string"
+          },
+          "sort": {
+            "type": "string",
+            "enum": ["title", "artist", "favorite", "added", "updated", "number", "random", "orderIndex", "lastPlayed", "mostPopular"]
+          },
+          "descending": {
+            "type": "boolean"
+          },
+          "limit": {
+            "type": "integer",
+            "default": 100
+          },
+          "start": {
+            "type": "integer",
+            "default": 0
+          }
+        },
+        "response": {
+          "$ref": "#/definitions/SongsSearchResponse"
+        }
+      },
+      "PUT": {
+        "description": "Create new song",
+        "body": {
+          "$ref": "#/definitions/SongObject"
+        },
+        "response": {
+          "$ref": "#/definitions/SuccessResponse"
+        }
+      }
+    },
+    "/api/{token}/songs/{songId}": {
+      "GET": {
+        "description": "Get song details",
+        "response": {
+          "$ref": "#/definitions/SongObject"
+        }
+      },
+      "POST": {
+        "description": "Update song",
+        "body": {
+          "$ref": "#/definitions/SongObject"
+        },
+        "response": {
+          "$ref": "#/definitions/SuccessResponse"
+        }
+      },
+      "DELETE": {
+        "description": "Delete song",
+        "response": {
+          "$ref": "#/definitions/SuccessResponse"
+        }
+      }
+    },
+    "/api/{token}/sets": {
+      "GET": {
+        "description": "List/search sets",
+        "queryParams": {
+          "q": {
+            "type": "string"
+          },
+          "archived": {
+            "type": "boolean"
+          },
+          "sort": {
+            "type": "string",
+            "enum": ["title", "date", "added", "quantity"]
+          },
+          "descending": {
+            "type": "boolean"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "start": {
+            "type": "integer"
+          },
+          "show_songs": {
+            "type": "boolean"
+          }
+        },
+        "response": {
+          "$ref": "#/definitions/SetsListResponse"
+        }
+      },
+      "PUT": {
+        "description": "Create new set",
+        "body": {
+          "$ref": "#/definitions/SetObject"
+        },
+        "response": {
+          "$ref": "#/definitions/SuccessResponse"
+        }
+      }
+    },
+    "/api/{token}/hooks": {
+      "GET": {
+        "description": "List registered webhooks"
+      },
+      "PUT": {
+        "description": "Register webhook",
+        "body": {
+          "$ref": "#/definitions/WebhookRegistration"
+        }
+      },
+      "POST": {
+        "description": "Receive webhook event",
+        "body": {
+          "$ref": "#/definitions/WebhookEvent"
+        }
+      },
+      "DELETE": {
+        "description": "Remove webhook"
+      }
+    }
+  },
+  "urlSchemes": {
+    "import": {
+      "pattern": "onsong://ImportData/{filename}?{base64_content}",
+      "description": "Import chart with base64-encoded content"
+    },
+    "importUrl": {
+      "pattern": "onsong://{url_to_file}",
+      "description": "Import chart from URL"
+    },
+    "export": {
+      "pattern": "onsong://export/songs?collection={collection}&returnURL={callback_url}",
+      "description": "Export songs with callback"
+    },
+    "action": {
+      "pattern": "onsong://action/{action_name}?{params}",
+      "description": "Trigger named action"
+    },
+    "actionList": {
+      "pattern": "onsong://action/list?returnURL={callback_url}",
+      "description": "Get list of available actions"
+    },
+    "openSong": {
+      "pattern": "onsong://open/songs?song={song_id_or_title}",
+      "description": "Open specific song"
+    },
+    "openSet": {
+      "pattern": "onsong://open/songs?set={set_name}",
+      "description": "Open specific set"
+    },
+    "navigate": {
+      "pattern": "onsong://open/songs?index={first|last|next|previous|number}",
+      "description": "Navigate within set"
+    }
+  },
+  "commonActions": [
+    "ForwardPedalWasPressed",
+    "BackwardPedalWasPressed",
+    "LeftPedalWasPressed",
+    "RightPedalWasPressed",
+    "PositionWasAdjusted",
+    "SongSectionWasPressed",
+    "NextSongWasRequested",
+    "PreviousSongWasRequested",
+    "AutoScrollWasToggled",
+    "MetronomeWasToggled"
+  ]
+}

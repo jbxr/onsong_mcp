@@ -1,0 +1,234 @@
+<html>
+	<head>
+		<title>OnSong API: Media</title>
+		<link rel="stylesheet" type="text/css" href="../assets/styles/default.css"/>
+	</head>
+	<body>
+		<header>
+			<div id="logo"/>
+		</header>
+		<div id="content">
+			<h2>Media</h3>
+			<p>Media are images and videos that can be used as background for lyrics projection.</p>
+
+			<h3>List media</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/media</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>GET</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+	
+			<h4>Description</h4>
+			<p>Retrieves a list of media items on the device.</p>
+
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Query arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>types</strong></td>
+						<td>string</td>
+						<td>A comma-delimited list of types. Types can be video, image or audio.</td>
+						<td>Optional</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>Returns the results as an array of media items.</p>
+			<pre>{
+    "results": [
+        {
+            "ID": "12bdd5a5e8b85b1505782e38e7b4288d351d0d7b",
+            "title": "Blue Bokeh",
+            "type": "video",
+            "notes": {
+                "width": 1920,
+                "duration": 16.55820846557617,
+                "height": 1080
+            },
+            "fileSize": 2321914
+        },
+        {
+            "ID": "FE4B1B7C-01BC-40CE-BCA0-299CC9542090",
+            "type": "image",
+            "fileSize": 3030120,
+            "notes": {
+                "width": 1707,
+                "height": 1280
+            }
+        }
+    ],
+    "count": 3,
+    "types": null
+}</pre>
+
+			<h3>Media information</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/media/&lt;media_id&gt;</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>GET</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+	
+			<h4>Description</h4>
+			<p>Retrieves a list of media items on the device.</p>
+
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>media_id</strong></td>
+						<td>string</td>
+						<td>The identifier of the media to return. If set to "current", the currently selected media item for lyrics projection is returned.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>Returns the media item.</p>
+			<pre>{
+    "ID": "12bdd5a5e8b85b1505782e38e7b4288d351d0d7b",
+    "title": "Blue Bokeh",
+    "type": "video",
+    "notes": {
+        "width": 1920,
+        "duration": 16.55820846557617,
+        "height": 1080
+    },
+    "fileSize": 2321914
+}</pre>
+
+			<h3>Download media content</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/media/&lt;media_id&gt;/content</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>GET</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+	
+			<h4>Description</h4>
+			<p>Retrieves the asset represented by the media item. This will download the video, image or audio file.</p>
+
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>media_id</strong></td>
+						<td>string</td>
+						<td>The identifier of the media to return. If set to "current", the currently selected media item for lyrics projection is returned.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>A successful response is the media item's asset content such as a video, image or audio file. The MIME type of the response is set the MIME type of the underlying asset that was returned. In the event of a failure, a 404 status code is returned with an error property.</p>
+			<pre>{
+    "error": "Media not found"
+}</pre>
+
+			<h3>Import media</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/media</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>POST</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+	
+			<h4>Description</h4>
+			<p>Uploads media assets into the user's media library and returns an array containing the newly created media items.</p>
+
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Body</h4>
+			<p>Upload one or more files using one or more files in a multipart form data. In HTML you can do this with the following code:</p>
+			<pre>&lt;form action="/api/&lt;auth_token&gt;/media/import" method="post" enctype="multipart/form-data"&gt;
+  &lt;input type="file" name="file1"/&gt;
+  &lt;input type="file" name="file2"/&gt;
+  &lt;input type="submit" value="Import"/&gt;
+&lt;/form&gt;</pre>
+
+			<h4>Response</h4>
+			<p>Returns the number of files that were imported with a success boolean, or an error property with a message..</p>
+			
+			<h4>Response example</h4>
+			<pre>{
+    "count": 2,
+    "success": true
+}</pre>
+		</div>
+	</body>
+	<script src="../assets/scripts/default.js"></script>
+</html>

@@ -1,0 +1,85 @@
+<html>
+	<head>
+		<title>OnSong API: Set Object</title>
+		<link rel="stylesheet" type="text/css" href="../../assets/styles/default.css"/>
+	</head>
+	<body>
+		<header>
+			<div id="logo"/>
+		</header>
+		<div id="content">
+			<h2>Set Object</h2>
+			<p>The set object contains detailed information about a set in the library.  This is used to retrieve and update set information.</p>
+			
+			<h3>Parameters</h3>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>ID</strong></td>
+						<td>string</td>
+						<td>The unique identifier of the set.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>title</strong></td>
+						<td>string</td>
+						<td>The title of the set.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>quantity</strong></td>
+						<td>int</td>
+						<td>The number of songs in the set.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>datetime</strong></td>
+						<td>date</td>
+						<td>The date of the set.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>orderIndex</strong></td>
+						<td>int</td>
+						<td>The method to use for returning songs in the set.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>user</strong></td>
+						<td>string</td>
+						<td>The unique identifier of the user who created the set.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>created</strong></td>
+						<td>date</td>
+						<td>The date and time the set was created.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>modified</strong></td>
+						<td>date</td>
+						<td>The date and time the set was last modified.</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>songs</strong></td>
+						<td>array</td>
+						<td>The list of songs that are in the set sorted in custom order.</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h3>Example</h3>
+			<pre>{
+  "modified" : "2010-06-20T17:14:58-04:00",
+  "user" : "87b7d2eededcd0f408ee4de1bfe8f42b300e47d6",
+  "orderMethod" : "orderIndex",
+  "quantity" : 1,
+  "created" : "1969-12-31T19:00:00-05:00",
+  "ID" : "welcome_to_song",
+  "title" : "Welcome"
+}</pre>
+		</div>
+	</body>
+	<script src="../../assets/scripts/default.js"></script>
+</html>

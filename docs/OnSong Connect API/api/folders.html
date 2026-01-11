@@ -1,0 +1,340 @@
+<html>
+	<head>
+		<title>OnSong API: Folders</title>
+		<link rel="stylesheet" type="text/css" href="../assets/styles/default.css"/>
+	</head>
+	<body>
+		<header>
+			<div id="logo"/>
+		</header>
+		<div id="content">
+			<h2>Folders</h2>
+			<p>Folders are used to organize sets for specific venues or other organization methods.</p>
+
+			<h3 id="api_songs">Find folders</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/folders</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>GET</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+	
+			<h4>Description</h4>
+			<p>Finds and lists folders in your OnSong library.</p>
+			
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Query arguments</h4>
+			<p>Options for searching are passed via the query string as follows:</p>
+			<p style="margin-bottom:1em;">
+				<code>/api/&lt;auth_token&gt;/folders?q=welcome&limit=10&sort=title</code>
+			</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>q</strong></td>
+						<td>string</td>
+						<td>The query to look up folders by title</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="even">
+						<td><strong>sort</strong></td>
+						<td>string</td>
+						<td>
+							The sort method to use when returning folders. Options include: 
+							<ul>
+								<li><strong>title</strong> sorts the folders by title. Default.</li>
+								<li><strong>quantity</strong> sorts the folders by the number of sets contained within.</li>
+								<li><strong>orderIndex</strong> sorts the folders by a user-defined order.</li>
+							</ul>
+						</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>descending</strong></td>
+						<td>boolean</td>
+						<td>Determines if folders should be returned in descending order. The default order is set by the sort method.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="even">
+						<td><strong>limit</strong></td>
+						<td>number</td>
+						<td>Limits the number of results returned. Default is 100.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>start</strong></td>
+						<td>number</td>
+						<td>Offsets the start of returned results to be used for paging through results. Default is 0.</td>
+						<td>Optional</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Response</h4>
+			<p>Returns a list of folders in the OnSong library including the folder's unique identifier, title and quantity of sets in the folder.</p>
+			
+			<h4>Response example</h4>
+			<pre>{
+  "attributes" : {
+    "q" : "welcome",
+    "start" : "0",
+    "limit" : "2"
+  },
+  "count" : 1,
+  "results" : [
+    {
+      "ID" : "7C55CC6B-1BED-4D42-9517-3D600C5BEC77",
+      "title" : "Carly's Pub",
+      "quantity" : 1
+    }
+  ]
+}</pre>
+
+			<h3>Create folder</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/folders</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>PUT</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+			
+			<h4>Description</h4>
+			<p>Creates a new folder in your library.</p>
+			
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Body arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>title</strong></td>
+						<td>string</td>
+						<td>The title of the folder.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>orderMethod</strong></td>
+						<td>string</td>
+						<td>The order method to use when sorting sets within the folder. Valid options include <em>title</em> or <em>orderIndex</em>.</td>
+						<td>Optional</td>
+					</tr>
+					<tr class="odd">
+						<td><strong>sets</strong></td>
+						<td>array</td>
+						<td>An array of set identifiers in the preferred order.</td>
+						<td>Optional</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>One of two results will be returned:</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>success</strong></td>
+						<td>object</td>
+						<td>The operation was successful and basic folder information is returned.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>error</strong></td>
+						<td>string</td>
+						<td>The operation has failed and text indicating the error is returned.</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Response example</h4>
+			<p>The following is an example of a successful update:</p>
+			<pre>{
+  "success" : {
+    "ID" : "837BB846-F374-4369-86ED-2A1A08EE131B", 
+    "title" : "New Folder"
+    "datetime" : "2013-12-04T07:39:00+05:00"
+  }
+}</pre>
+			<p>The following is an example of a failed operation with a 500 status code:</p>
+			<pre>{
+  "error" : "Input must be a dictionary object"
+}</pre>
+
+			<h3>View folder information</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/folders/&lt;folder_identifier&gt;</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>GET</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+			
+			<h4>Description</h4>
+			<p>Retrieves folder information from the OnSong library.</p>
+			
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>folder_identifier</strong></td>
+						<td>string</td>
+						<td>The identifier of the folder information to be retrieved.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<p>Returns a <a href="classes/folder.html">Folder Object</a>.
+
+			<h4>Response example</h4>
+			<p>The response does not include NULL values.</p>
+			<pre>{
+    "ID": "55E44C19-D2ED-4665-B191-C6EC9B6F60C2",
+    "title": "Folder Title",
+    "modified": "2015-04-14T11:05:21-04:00",
+    "orderMethod": "title",
+    "quantity": 1,
+    "created": "2015-04-14T11:05:21-04:00"
+}</pre>
+
+			<h3>Delete folder</h3>
+			<table>
+				<tr class="even"><td><strong>URL</strong></td><td><code>/api/&lt;auth_token&gt;/folders/&lt;folder_identifier&gt;</code></td></tr>
+				<tr class="odd"><td><strong>Method</strong></td><td><code>DELETE</code></td></tr>
+				<tr class="even"><td><strong>Version</strong></td><td>1.0</td></tr>
+			</table>
+			
+			<h4>Description</h4>
+			<p>Deletes a folder from your library.</p>
+			
+			<h4>Path arguments</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Required</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>auth_token</strong></td>
+						<td>string</td>
+						<td>The authentication token used to authenticate the request.</td>
+						<td>Required</td>
+					</tr>
+					<tr class="even">
+						<td><strong>folder_identifier</strong></td>
+						<td>string</td>
+						<td>The identifier of the folder to be deleted.</td>
+						<td>Required</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h4>Response</h4>
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Type</th>
+						<th>Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr class="odd">
+						<td><strong>success</strong></td>
+						<td>object</td>
+						<td>The operation was successful and basic folder information is returned.</td>
+					</tr>
+					<tr class="even">
+						<td><strong>error</strong></td>
+						<td>string</td>
+						<td>The operation has failed and text indicating the error is returned.</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h4>Response example</h4>
+			<p>The following is an example of a successful deletion:</p>
+			<pre>{
+  "success" : { "ID" : "837BB846-F374-4369-86ED-2A1A08EE131B", "title" : "Deleted Folder" }
+}</pre>
+			<p>The following is an example of a failed operation with a 500 status code:</p>
+			<pre>{
+  "error" : "No folder found"
+}</pre>
+		</div>
+	</body>
+	<script src="../assets/scripts/default.js"></script>
+</html>
