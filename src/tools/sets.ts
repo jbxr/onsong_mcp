@@ -5,16 +5,16 @@ import { mcpError, OnSongError, ErrorCodes } from '../lib/errors.js'
 import { targetSchema } from '../lib/schemas.js'
 import type { ApiSetObject, ApiSongObject } from '../lib/schemas.js'
 
-const LIST_TOOL_NAME = 'onsong.sets.list'
+const LIST_TOOL_NAME = 'onsong_sets_list'
 const LIST_TOOL_DESCRIPTION = 'List all sets in the OnSong library'
 
-const CREATE_TOOL_NAME = 'onsong.sets.create'
+const CREATE_TOOL_NAME = 'onsong_sets_create'
 const CREATE_TOOL_DESCRIPTION = 'Create a new set in OnSong'
 
-const GET_TOOL_NAME = 'onsong.sets.get'
+const GET_TOOL_NAME = 'onsong_sets_get'
 const GET_TOOL_DESCRIPTION = 'Get set details including songs'
 
-const ADD_SONG_TOOL_NAME = 'onsong.sets.add_song'
+const ADD_SONG_TOOL_NAME = 'onsong_sets_add_song'
 const ADD_SONG_TOOL_DESCRIPTION = 'Add a song to a set'
 
 const listInputSchema = {

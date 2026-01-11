@@ -2,7 +2,7 @@ import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
 import { DiscoveryService } from '../services/discovery.js'
 
-const TOOL_NAME = 'onsong.discover'
+const TOOL_NAME = 'onsong_discover'
 const TOOL_DESCRIPTION = 'Discover OnSong Connect servers on the local network via Bonjour/mDNS'
 
 const inputSchema = {

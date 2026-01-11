@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { ConnectClient } from '../services/connect-client.js'
 import { mcpError } from '../lib/errors.js'
 
-const TOOL_NAME = 'onsong.connect_test'
+const TOOL_NAME = 'onsong_connect_test'
 const TOOL_DESCRIPTION = 'Validate that a chosen OnSong device is reachable and authenticated'
 
 const inputSchema = {
