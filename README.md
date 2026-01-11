@@ -1,5 +1,11 @@
 # OnSong MCP Server
 
+[![npm version](https://badge.fury.io/js/onsong-mcp.svg)](https://badge.fury.io/js/onsong-mcp)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/node/v/onsong-mcp.svg)](https://nodejs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)
+[![MCP SDK](https://img.shields.io/badge/MCP%20SDK-1.0-green.svg)](https://github.com/modelcontextprotocol/typescript-sdk)
+
 An MCP (Model Context Protocol) server that enables LLM clients to interact with the [OnSong](https://onsongapp.com/) app via its local network REST API and URL schemes.
 
 ## Features
