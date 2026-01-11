@@ -251,6 +251,28 @@ export const apiSetsListResponseSchema = z.object({
   results: z.array(apiSetObjectSchema),
 })
 
+export const apiCreateSongResponseSchema = z.object({
+  success: z
+    .object({
+      ID: z.string(),
+      title: z.string(),
+      artist: z.string().optional(),
+      key: z.string().optional(),
+    })
+    .optional(),
+  error: z.string().optional(),
+})
+
+export const apiUpdateContentResponseSchema = z.object({
+  success: z
+    .object({
+      ID: z.string(),
+      title: z.string(),
+    })
+    .optional(),
+  error: z.string().optional(),
+})
+
 export type DeviceMetadata = z.infer<typeof deviceMetadataSchema>
 export type OnSongDevice = z.infer<typeof onSongDeviceSchema>
 export type Target = z.infer<typeof targetSchema>
@@ -286,3 +308,5 @@ export type ApiSetObject = z.infer<typeof apiSetObjectSchema>
 export type ApiStateObject = z.infer<typeof apiStateObjectSchema>
 export type ApiSongsSearchResponse = z.infer<typeof apiSongsSearchResponseSchema>
 export type ApiSetsListResponse = z.infer<typeof apiSetsListResponseSchema>
+export type ApiCreateSongResponse = z.infer<typeof apiCreateSongResponseSchema>
+export type ApiUpdateContentResponse = z.infer<typeof apiUpdateContentResponseSchema>

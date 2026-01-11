@@ -2,8 +2,11 @@ import { Bonjour, type Service } from 'bonjour-service'
 import type { OnSongDevice, DeviceMetadata } from '../lib/schemas.js'
 import { createChildLogger } from '../lib/logger.js'
 
-const SERVICE_TYPE = 'onsong'
+// OnSong advertises as _onsongapp._tcp (not _onsong._tcp as documented)
+const SERVICE_TYPE = 'onsongapp'
 const DEFAULT_TIMEOUT_MS = 2000
+// The Bonjour port is for sync protocol; the REST API runs on port 80
+const DEFAULT_API_PORT = 80
 
 export class DiscoveryService {
   private readonly logger = createChildLogger({ service: 'discovery' })
@@ -24,7 +27,8 @@ export class DiscoveryService {
       }, timeoutMs)
 
       browser.on('up', (service: Service) => {
-        const key = `${service.host}:${service.port}`
+        // Dedupe by host (not port, since we override port to API port)
+        const key = service.host
         if (seen.has(key)) return
         seen.add(key)
 
@@ -45,10 +49,15 @@ export class DiscoveryService {
     const txt = service.txt as Record<string, string> | undefined
     const metadata: DeviceMetadata | undefined = this.extractMetadata(txt)
 
+    // Use displayName from TXT record if available, otherwise fall back to service name
+    const displayName = txt?.['displayName'] ?? txt?.['_d']
+    const name = displayName ?? service.name
+
     return {
-      name: service.name,
+      name,
       host: service.host,
-      port: service.port,
+      // The advertised port is for sync protocol; REST API is on port 80
+      port: DEFAULT_API_PORT,
       addresses: service.addresses ?? [],
       ...(metadata && { metadata }),
     }
