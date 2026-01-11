@@ -7,11 +7,12 @@ import { UrlSchemeService } from '../services/url-scheme.js'
 import { createAuthenticatedClient } from '../services/client-factory.js'
 import { CallbackServer, type ExportCallbackData } from '../services/callback-server.js'
 import { mcpError, OnSongError, ErrorCodes } from '../lib/errors.js'
+import { exportOutputSchema, targetSchema } from '../lib/schemas.js'
 import type { Config } from '../lib/schemas.js'
-import { targetSchema } from '../lib/schemas.js'
 import { createChildLogger } from '../lib/logger.js'
 
 const TOOL_NAME = 'onsong_library_export'
+const TOOL_TITLE = 'Export from OnSong'
 const TOOL_DESCRIPTION =
   'Export song content from OnSong. Use target for remote devices (REST API, single song only) or omit for local (URL scheme, supports sets/library)'
 
@@ -23,7 +24,7 @@ const FORMAT_EXTENSIONS: Record<string, string> = {
   pdf: '.pdf',
 }
 
-const inputSchema = {
+const inputSchema = z.object({
   target: targetSchema
     .optional()
     .describe('Remote OnSong device to export from (uses REST API, single song only)'),
@@ -34,117 +35,120 @@ const inputSchema = {
     .string()
     .optional()
     .describe('Directory path for exported files (optional with REST API)'),
-}
+})
 
 export function registerExportTool(server: McpServer, config: Config): void {
   const logger = createChildLogger({ tool: TOOL_NAME })
   const urlScheme = new UrlSchemeService()
   const callbackServer = new CallbackServer(config.callbackPort)
 
-  server.tool(TOOL_NAME, TOOL_DESCRIPTION, inputSchema, async (args) => {
-    try {
-      if (args.target !== undefined) {
-        if (args.scope !== 'song') {
-          throw new OnSongError(ErrorCodes.INVALID_INPUT, {
-            message:
-              'REST API export only supports scope "song". Use URL scheme (omit target) for sets/library.',
-          })
-        }
+  server.registerTool(
+    TOOL_NAME,
+    {
+      title: TOOL_TITLE,
+      description: TOOL_DESCRIPTION,
+      inputSchema,
+      outputSchema: exportOutputSchema,
+    },
+    async (args) => {
+      try {
+        if (args.target !== undefined) {
+          if (args.scope !== 'song') {
+            throw new OnSongError(ErrorCodes.INVALID_INPUT, {
+              message:
+                'REST API export only supports scope "song". Use URL scheme (omit target) for sets/library.',
+            })
+          }
 
-        const client = await createAuthenticatedClient(args.target, 'OnSong MCP Server')
+          const client = await createAuthenticatedClient(args.target, 'OnSong MCP Server')
 
-        logger.info(
-          { songId: args.identifier, host: args.target.host },
-          'Fetching song content via REST API'
-        )
+          logger.info(
+            { songId: args.identifier, host: args.target.host },
+            'Fetching song content via REST API'
+          )
 
-        const content = await client.getSongContent(args.identifier)
+          const content = await client.getSongContent(args.identifier)
 
-        if (args.output_dir !== undefined) {
-          await mkdir(args.output_dir, { recursive: true })
-          const filename =
-            sanitizeFilename(args.identifier) + (FORMAT_EXTENSIONS[args.format] ?? '.txt')
-          const filepath = join(args.output_dir, filename)
-          await writeFile(filepath, content)
+          if (args.output_dir !== undefined) {
+            await mkdir(args.output_dir, { recursive: true })
+            const filename =
+              sanitizeFilename(args.identifier) + (FORMAT_EXTENSIONS[args.format] ?? '.txt')
+            const filepath = join(args.output_dir, filename)
+            await writeFile(filepath, content)
 
+            const result = { exported_files: [filepath], method: 'rest_api' }
+            return {
+              content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }],
+              structuredContent: result,
+            }
+          }
+
+          const result = { content, song_id: args.identifier, method: 'rest_api' }
           return {
-            content: [
-              {
-                type: 'text' as const,
-                text: JSON.stringify({ exported_files: [filepath], method: 'rest_api' }, null, 2),
-              },
-            ],
+            content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }],
+            structuredContent: result,
           }
         }
 
-        return {
-          content: [
-            {
-              type: 'text' as const,
-              text: JSON.stringify(
-                { content, song_id: args.identifier, method: 'rest_api' },
-                null,
-                2
-              ),
-            },
-          ],
+        const requestId = randomUUID()
+
+        if (!urlScheme.isSupported()) {
+          throw new OnSongError(ErrorCodes.URL_SCHEME_UNSUPPORTED, {
+            message: 'URL schemes only supported on macOS. Provide target for remote export.',
+          })
         }
-      }
 
-      const requestId = randomUUID()
+        if (args.output_dir === undefined) {
+          throw new OnSongError(ErrorCodes.INVALID_INPUT, {
+            message: 'output_dir is required for URL scheme export',
+          })
+        }
 
-      if (!urlScheme.isSupported()) {
-        throw new OnSongError(ErrorCodes.URL_SCHEME_UNSUPPORTED, {
-          message: 'URL schemes only supported on macOS. Provide target for remote export.',
+        await mkdir(args.output_dir, { recursive: true })
+
+        await callbackServer.start()
+
+        const returnUrl = callbackServer.getCallbackUrl(requestId)
+        const collection = buildCollectionString(args.scope, args.identifier)
+
+        logger.info(
+          { requestId, collection, format: args.format },
+          'Starting export via URL scheme'
+        )
+
+        const callbackPromise = callbackServer.waitForCallback(requestId, EXPORT_TIMEOUT_MS)
+
+        await urlScheme.exportSongs({
+          collection,
+          returnUrl,
+          format: args.format,
         })
+
+        const callbackData = await callbackPromise
+        const exportedFiles = await writeExportedFiles(callbackData, args.output_dir, args.format)
+
+        const warnings: string[] = []
+        if (callbackData.files.length === 0) {
+          warnings.push('No files were returned from OnSong export')
+        }
+
+        const result = {
+          exported_files: exportedFiles,
+          method: 'url_scheme',
+          ...(warnings.length > 0 ? { warnings } : {}),
+        }
+
+        logger.info({ requestId, fileCount: exportedFiles.length }, 'Export completed')
+
+        return {
+          content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }],
+          structuredContent: result,
+        }
+      } catch (error) {
+        return mcpError(error)
       }
-
-      if (args.output_dir === undefined) {
-        throw new OnSongError(ErrorCodes.INVALID_INPUT, {
-          message: 'output_dir is required for URL scheme export',
-        })
-      }
-
-      await mkdir(args.output_dir, { recursive: true })
-
-      await callbackServer.start()
-
-      const returnUrl = callbackServer.getCallbackUrl(requestId)
-      const collection = buildCollectionString(args.scope, args.identifier)
-
-      logger.info({ requestId, collection, format: args.format }, 'Starting export via URL scheme')
-
-      const callbackPromise = callbackServer.waitForCallback(requestId, EXPORT_TIMEOUT_MS)
-
-      await urlScheme.exportSongs({
-        collection,
-        returnUrl,
-        format: args.format,
-      })
-
-      const callbackData = await callbackPromise
-      const exportedFiles = await writeExportedFiles(callbackData, args.output_dir, args.format)
-
-      const warnings: string[] = []
-      if (callbackData.files.length === 0) {
-        warnings.push('No files were returned from OnSong export')
-      }
-
-      const result = {
-        exported_files: exportedFiles,
-        method: 'url_scheme',
-        ...(warnings.length > 0 ? { warnings } : {}),
-      }
-
-      logger.info({ requestId, fileCount: exportedFiles.length }, 'Export completed')
-
-      return {
-        content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }],
-      }
-    } catch (error) {
-      return mcpError(error)
     }
-  })
+  )
 }
 
 function buildCollectionString(scope: 'song' | 'set' | 'library', identifier: string): string {
