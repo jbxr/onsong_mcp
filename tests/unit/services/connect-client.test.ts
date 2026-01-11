@@ -465,4 +465,317 @@ Amazing [G]grace how [C]sweet the [G]sound`
       )
     })
   })
+
+  describe('getSongContent', () => {
+    it('fetches song content successfully', async () => {
+      const songContent = '{title: Amazing Grace}\n\n[Verse]\nAmazing grace'
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        text: async () => songContent,
+      })
+
+      const client = new ConnectClient({
+        host: '10.0.0.1',
+        port: 80,
+        token: 'a'.repeat(32),
+      })
+
+      const result = await client.getSongContent('song-123')
+
+      expect(result).toBe(songContent)
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('/songs/song-123/content'),
+        expect.objectContaining({ method: 'GET' })
+      )
+    })
+
+    it('URL-encodes song ID in path', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        text: async () => 'content',
+      })
+
+      const client = new ConnectClient({
+        host: '10.0.0.1',
+        port: 80,
+        token: 'a'.repeat(32),
+      })
+
+      await client.getSongContent('song with spaces')
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('/songs/song%20with%20spaces/content'),
+        expect.any(Object)
+      )
+    })
+
+    it('throws API_NOT_FOUND on 404', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 404,
+        text: async () => 'Not Found',
+      })
+
+      const client = new ConnectClient({
+        host: '10.0.0.1',
+        port: 80,
+        token: 'a'.repeat(32),
+      })
+
+      await expect(client.getSongContent('nonexistent')).rejects.toMatchObject({
+        code: ErrorCodes.API_NOT_FOUND,
+      })
+    })
+
+    it('throws API_ERROR on other HTTP errors', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        text: async () => 'Internal Server Error',
+      })
+
+      const client = new ConnectClient({
+        host: '10.0.0.1',
+        port: 80,
+        token: 'a'.repeat(32),
+      })
+
+      await expect(client.getSongContent('song-123')).rejects.toMatchObject({
+        code: ErrorCodes.API_ERROR,
+      })
+    })
+
+    it('throws CONNECTION_TIMEOUT on abort', async () => {
+      mockFetch.mockImplementation(async () => {
+        const error = new Error('Aborted')
+        error.name = 'AbortError'
+        throw error
+      })
+
+      const client = new ConnectClient({
+        host: '10.0.0.1',
+        port: 80,
+        token: 'a'.repeat(32),
+        timeoutMs: 100,
+      })
+
+      await expect(client.getSongContent('song-123')).rejects.toMatchObject({
+        code: ErrorCodes.CONNECTION_TIMEOUT,
+      })
+    })
+
+    it('throws CONNECTION_REFUSED on network error', async () => {
+      mockFetch.mockRejectedValue(new Error('Network error'))
+
+      const client = new ConnectClient({
+        host: '10.0.0.1',
+        port: 80,
+        token: 'a'.repeat(32),
+      })
+
+      await expect(client.getSongContent('song-123')).rejects.toMatchObject({
+        code: ErrorCodes.CONNECTION_REFUSED,
+      })
+    })
+  })
+
+  describe('listSets', () => {
+    it('fetches sets successfully', async () => {
+      const setsResponse = {
+        count: 2,
+        results: [
+          { ID: 'set-1', name: 'Sunday Morning', quantity: 5 },
+          { ID: 'set-2', name: 'Wednesday Night', quantity: 3 },
+        ],
+      }
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => setsResponse,
+      })
+
+      const client = new ConnectClient({
+        host: '10.0.0.1',
+        port: 80,
+        token: 'a'.repeat(32),
+      })
+
+      const result = await client.listSets()
+
+      expect(result.count).toBe(2)
+      expect(result.results).toHaveLength(2)
+      expect(result.results[0]?.name).toBe('Sunday Morning')
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('/sets'),
+        expect.objectContaining({ method: 'GET' })
+      )
+    })
+  })
+
+  describe('createSet', () => {
+    it('creates set successfully', async () => {
+      const createResponse = {
+        success: { ID: 'new-set-id', name: 'New Set' },
+      }
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => createResponse,
+      })
+
+      const client = new ConnectClient({
+        host: '10.0.0.1',
+        port: 80,
+        token: 'a'.repeat(32),
+      })
+
+      const result = await client.createSet('New Set')
+
+      expect(result.success?.ID).toBe('new-set-id')
+      expect(result.success?.name).toBe('New Set')
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('/sets'),
+        expect.objectContaining({
+          method: 'PUT',
+          body: JSON.stringify({ name: 'New Set' }),
+        })
+      )
+    })
+
+    it('throws on API error', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ error: 'Set already exists' }),
+      })
+
+      const client = new ConnectClient({
+        host: '10.0.0.1',
+        port: 80,
+        token: 'a'.repeat(32),
+      })
+
+      await expect(client.createSet('Duplicate')).rejects.toMatchObject({
+        code: ErrorCodes.API_ERROR,
+      })
+    })
+  })
+
+  describe('getSet', () => {
+    it('fetches set details with songs', async () => {
+      const setDetail = {
+        ID: 'set-123',
+        name: 'Sunday Morning',
+        archived: false,
+        songs: [
+          { ID: 'song-1', title: 'Amazing Grace', artist: 'Traditional' },
+          { ID: 'song-2', title: 'How Great Thou Art', artist: 'Traditional' },
+        ],
+      }
+
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => setDetail,
+      })
+
+      const client = new ConnectClient({
+        host: '10.0.0.1',
+        port: 80,
+        token: 'a'.repeat(32),
+      })
+
+      const result = await client.getSet('set-123')
+
+      expect(result.ID).toBe('set-123')
+      expect(result.name).toBe('Sunday Morning')
+      expect(result.songs).toHaveLength(2)
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('/sets/set-123'),
+        expect.objectContaining({ method: 'GET' })
+      )
+    })
+
+    it('URL-encodes set ID in path', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ name: 'Test Set' }),
+      })
+
+      const client = new ConnectClient({
+        host: '10.0.0.1',
+        port: 80,
+        token: 'a'.repeat(32),
+      })
+
+      await client.getSet('set with spaces')
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('/sets/set%20with%20spaces'),
+        expect.any(Object)
+      )
+    })
+  })
+
+  describe('addSongToSet', () => {
+    it('adds song to set successfully', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ success: 'Song added' }),
+      })
+
+      const client = new ConnectClient({
+        host: '10.0.0.1',
+        port: 80,
+        token: 'a'.repeat(32),
+      })
+
+      const result = await client.addSongToSet('set-123', 'song-456')
+
+      expect(result.success).toBe('Song added')
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('/sets/set-123/songs'),
+        expect.objectContaining({
+          method: 'PUT',
+          body: JSON.stringify({ songID: 'song-456' }),
+        })
+      )
+    })
+
+    it('throws on API error', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ error: 'Song not found' }),
+      })
+
+      const client = new ConnectClient({
+        host: '10.0.0.1',
+        port: 80,
+        token: 'a'.repeat(32),
+      })
+
+      await expect(client.addSongToSet('set-123', 'invalid-song')).rejects.toMatchObject({
+        code: ErrorCodes.API_ERROR,
+      })
+    })
+
+    it('URL-encodes set ID in path', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ success: 'Song added' }),
+      })
+
+      const client = new ConnectClient({
+        host: '10.0.0.1',
+        port: 80,
+        token: 'a'.repeat(32),
+      })
+
+      await client.addSongToSet('set with spaces', 'song-123')
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('/sets/set%20with%20spaces/songs'),
+        expect.any(Object)
+      )
+    })
+  })
 })

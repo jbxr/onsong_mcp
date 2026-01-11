@@ -13,15 +13,23 @@ Research confirms that OnSong provides comprehensive developer APIs sufficient f
 
 ### Discovery (Bonjour/mDNS)
 
-**Decision**: Use `bonjour-service` npm package to discover OnSong devices advertising `_onsong._tcp` service type.
+**Decision**: Use `bonjour-service` npm package to discover OnSong devices advertising `_onsongapp._tcp` service type.
 
-**Rationale**: 
-- OnSong Connect advertises via Bonjour/mDNS with service type `_onsong._tcp`
-- Default port is 5076 (configurable)
-- TXT record contains: model, deviceid, version, role (client/server)
+**Rationale**:
+
+- OnSong Connect advertises via Bonjour/mDNS with service type `_onsongapp._tcp` (note: this differs from the documented `_onsong._tcp`)
+- The Bonjour advertised port (e.g., 5076) is the sync port; the REST API runs on port **80**
+- TXT record contains: model, deviceid (or deviceId), version, role (client/server), displayName (or \_d)
 - `bonjour-service` is TypeScript-native, actively maintained, and has built-in timeout support
 
+**Important implementation notes**:
+
+- Service type must be `_onsongapp._tcp`, not `_onsong._tcp`
+- After discovery, connect to port 80 for the REST API, not the advertised port
+- displayName can be found in TXT record as `displayName`, `_d`, or fall back to service name
+
 **Alternatives considered**:
+
 - `multicast-dns` - Lower-level, requires manual record parsing
 - `bonjour` (original) - Deprecated, archived
 
@@ -30,12 +38,14 @@ Research confirms that OnSong provides comprehensive developer APIs sufficient f
 **Decision**: Generate and register a 32+ character authentication token per device.
 
 **Rationale**:
+
 - OnSong Connect requires token registration before API access
 - Token flow: `PUT /api/<token>/auth` to register, `GET` to verify
 - Token can include friendly name for identification
 - Store token in configuration file for persistence
 
 **Flow**:
+
 ```
 1. GET /api/<token>/auth → 404 "Not Registered"
 2. PUT /api/<token>/auth (body: {name: "MCP Server"}) → "Token Registered"
@@ -47,6 +57,7 @@ Research confirms that OnSong provides comprehensive developer APIs sufficient f
 **Decision**: Use `GET /api/<token>/state` for current performance state.
 
 **Rationale**: Endpoint returns comprehensive state object:
+
 - `song` - Current song (ID, title, artist, key, favorite, usefile)
 - `set` - Current set object
 - `book` - Current book/collection
@@ -61,6 +72,7 @@ Research confirms that OnSong provides comprehensive developer APIs sufficient f
 **Decision**: Use `GET /api/<token>/songs` with query parameters.
 
 **Rationale**: Full-featured search API with:
+
 - `q` - Keyword search (title, artist, keywords, lyrics)
 - `title`, `artist`, `key`, `topic` - Field-specific filters
 - `set`, `book` - Collection filters
@@ -73,6 +85,7 @@ Research confirms that OnSong provides comprehensive developer APIs sufficient f
 **Decision**: Implement read operations for v1, defer delete/rename.
 
 **Rationale**:
+
 - Songs: `GET /songs/<id>` for details, `PUT /songs` creates new
 - Sets: Full CRUD available via `/sets` endpoints
 - v1 scope excludes delete/rename per PRD non-goals
@@ -86,12 +99,14 @@ Research confirms that OnSong provides comprehensive developer APIs sufficient f
 **Decision**: Use `onsong://ImportData/<filename>?<base64_data>` for chart import.
 
 **Rationale**:
+
 - Supports inline Base64-encoded content
 - Alternative: `onsong://<url>` for remote file import
 - No user confirmation required on macOS
 - Size limit: URL schemes have practical limits (~2MB encoded data)
 
 **Implementation**: Use macOS `open` command:
+
 ```bash
 open "onsong://ImportData/song.txt?<base64>"
 ```
@@ -101,6 +116,7 @@ open "onsong://ImportData/song.txt?<base64>"
 **Decision**: Use `onsong://export/songs?collection=<id>&returnURL=<callback>` with local HTTP callback.
 
 **Rationale**:
+
 - Export requires callback URL to receive data
 - Returns Base64-encoded tab-delimited data
 - Configurable columns: ID, title, artist, key, transposedKey, capo, etc.
@@ -111,6 +127,7 @@ open "onsong://ImportData/song.txt?<base64>"
 **Decision**: Use URL scheme actions for navigation control.
 
 **Rationale**: 170+ actions available including:
+
 - `onsong://action/ForwardPedalWasPressed` - Next section
 - `onsong://action/BackwardPedalWasPressed` - Previous section
 - `onsong://action/PositionWasAdjusted?amount=0.5` - Scroll position
@@ -123,6 +140,7 @@ open "onsong://ImportData/song.txt?<base64>"
 **Decision**: Use `onsong://open/songs?song=<id>` for direct navigation.
 
 **Rationale**:
+
 - Supports song ID or title
 - Can open by set: `?set=<name>` or `?set=current-set`
 - Index navigation: `?index=first|last|next|previous|<number>`
@@ -136,6 +154,7 @@ open "onsong://ImportData/song.txt?<base64>"
 **Decision**: TypeScript with Node.js 20+
 
 **Rationale**:
+
 - PRD explicitly specifies TypeScript/Node.js
 - MCP SDK is TypeScript-native
 - Strong typing for API contracts
@@ -148,12 +167,14 @@ open "onsong://ImportData/song.txt?<base64>"
 **Decision**: Use `@modelcontextprotocol/sdk` (official SDK)
 
 **Rationale**:
+
 - Official Anthropic-maintained SDK
 - High-level `McpServer` API with Zod schema integration
 - `StdioServerTransport` for standard MCP client communication
 - Built-in error handling patterns
 
 **Dependencies**:
+
 ```json
 {
   "@modelcontextprotocol/sdk": "^1.0.0",
@@ -169,6 +190,7 @@ open "onsong://ImportData/song.txt?<base64>"
 **Decision**: Use native `fetch` API (Node.js 20+ built-in)
 
 **Rationale**:
+
 - No additional dependency needed
 - Sufficient for OnSong Connect REST calls
 - Built-in timeout support via AbortController
@@ -178,12 +200,14 @@ open "onsong://ImportData/song.txt?<base64>"
 **Decision**: JSON config file at `~/.config/onsong-mcp/config.json`
 
 **Rationale**:
+
 - Standard XDG location
 - Human-readable and editable
 - Supports multiple device targets
 - Environment variable overrides for CI/automation
 
 **Schema**:
+
 ```json
 {
   "defaultTarget": { "host": "192.168.1.100", "port": 5076, "token": "..." },
@@ -199,6 +223,7 @@ open "onsong://ImportData/song.txt?<base64>"
 **Decision**: Use `pino` for structured JSON logging
 
 **Rationale**:
+
 - Fast, low-overhead
 - JSON output for machine parsing
 - Human-readable with `pino-pretty`
@@ -249,24 +274,24 @@ tests/
 
 ## 5. Open Questions Resolved
 
-| Question (from PRD) | Resolution |
-|---------------------|------------|
-| Exact Connect endpoint paths | Documented: `/api/<token>/{state,songs,sets,hooks,...}` |
-| Authentication method | 32+ char token in URL path, registered via `/auth` endpoint |
-| Connect supports search? | Yes: `GET /songs` with `q`, `title`, `artist`, etc. params |
-| URL scheme for export | Yes: `onsong://export/songs?collection=<id>&returnURL=<callback>` |
-| URL scheme for import | Yes: `onsong://ImportData/<name>?<base64>` |
-| Callback mechanism | HTTP callback URL; requires local HTTP server |
-| Bonjour service type | `_onsong._tcp` with metadata in TXT records |
+| Question (from PRD)          | Resolution                                                        |
+| ---------------------------- | ----------------------------------------------------------------- |
+| Exact Connect endpoint paths | Documented: `/api/<token>/{state,songs,sets,hooks,...}`           |
+| Authentication method        | 32+ char token in URL path, registered via `/auth` endpoint       |
+| Connect supports search?     | Yes: `GET /songs` with `q`, `title`, `artist`, etc. params        |
+| URL scheme for export        | Yes: `onsong://export/songs?collection=<id>&returnURL=<callback>` |
+| URL scheme for import        | Yes: `onsong://ImportData/<name>?<base64>`                        |
+| Callback mechanism           | HTTP callback URL; requires local HTTP server                     |
+| Bonjour service type         | `_onsongapp._tcp` (NOT `_onsong._tcp`); REST API on port 80       |
 
 ---
 
 ## 6. Risk Mitigation
 
-| Risk | Mitigation |
-|------|------------|
+| Risk                   | Mitigation                                                          |
+| ---------------------- | ------------------------------------------------------------------- |
 | URL scheme size limits | Document limits; chunk large imports; provide file path alternative |
-| OnSong not responding | Configurable timeouts; clear error messages; retry logic |
-| Export callback race | Timeout with pending state; correlation via request ID |
-| Version differences | Probe capabilities at connect time; graceful degradation |
-| Network isolation | Discovery timeout returns empty list; manual host entry supported |
+| OnSong not responding  | Configurable timeouts; clear error messages; retry logic            |
+| Export callback race   | Timeout with pending state; correlation via request ID              |
+| Version differences    | Probe capabilities at connect time; graceful degradation            |
+| Network isolation      | Discovery timeout returns empty list; manual host entry supported   |
