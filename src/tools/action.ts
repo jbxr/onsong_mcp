@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { UrlSchemeService } from '../services/url-scheme.js'
 import { mcpError, OnSongError, ErrorCodes } from '../lib/errors.js'
 
-const TOOL_NAME = 'onsong.action.run'
+const TOOL_NAME = 'onsong_action_run'
 const TOOL_DESCRIPTION = 'Trigger a named OnSong action (next/previous song, scroll, pedal actions)'
 
 const inputSchema = {

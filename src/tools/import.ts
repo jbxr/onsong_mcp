@@ -8,7 +8,7 @@ import { mcpError, OnSongError, ErrorCodes } from '../lib/errors.js'
 import type { Config } from '../lib/schemas.js'
 import { targetSchema } from '../lib/schemas.js'
 
-const TOOL_NAME = 'onsong.library.import'
+const TOOL_NAME = 'onsong_library_import'
 const TOOL_DESCRIPTION =
   'Import a chart file into OnSong. Use target for remote devices (REST API) or omit for local (URL scheme)'
 

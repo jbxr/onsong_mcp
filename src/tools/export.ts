@@ -11,7 +11,7 @@ import type { Config } from '../lib/schemas.js'
 import { targetSchema } from '../lib/schemas.js'
 import { createChildLogger } from '../lib/logger.js'
 
-const TOOL_NAME = 'onsong.library.export'
+const TOOL_NAME = 'onsong_library_export'
 const TOOL_DESCRIPTION =
   'Export song content from OnSong. Use target for remote devices (REST API, single song only) or omit for local (URL scheme, supports sets/library)'
 
