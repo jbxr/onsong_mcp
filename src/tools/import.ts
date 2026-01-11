@@ -3,7 +3,7 @@ import { basename } from 'node:path'
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
 import { UrlSchemeService } from '../services/url-scheme.js'
-import { ConnectClient } from '../services/connect-client.js'
+import { createAuthenticatedClient } from '../services/client-factory.js'
 import { mcpError, OnSongError, ErrorCodes } from '../lib/errors.js'
 import type { Config } from '../lib/schemas.js'
 import { targetSchema } from '../lib/schemas.js'
@@ -60,15 +60,7 @@ export function registerImportTool(server: McpServer, config: Config): void {
       }
 
       if (args.target !== undefined) {
-        const client = new ConnectClient({
-          host: args.target.host,
-          port: args.target.port,
-          ...(args.target.token !== undefined && { token: args.target.token }),
-        })
-
-        if (args.target.token === undefined) {
-          await client.authenticate('OnSong MCP Server')
-        }
+        const client = await createAuthenticatedClient(args.target, 'OnSong MCP Server')
 
         const { songId, title } = await client.importSong(content)
 

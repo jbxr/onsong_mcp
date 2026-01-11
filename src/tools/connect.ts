@@ -1,6 +1,6 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
-import { ConnectClient } from '../services/connect-client.js'
+import { createAuthenticatedClient } from '../services/client-factory.js'
 import { mcpError } from '../lib/errors.js'
 
 const TOOL_NAME = 'onsong_connect_test'
@@ -14,9 +14,7 @@ const inputSchema = {
 export function registerConnectTestTool(server: McpServer): void {
   server.tool(TOOL_NAME, TOOL_DESCRIPTION, inputSchema, async (args) => {
     try {
-      const client = new ConnectClient({ host: args.host, port: args.port })
-
-      await client.authenticate('onsong-mcp')
+      const client = await createAuthenticatedClient({ host: args.host, port: args.port })
       const pingResult = await client.ping()
 
       const result = {
