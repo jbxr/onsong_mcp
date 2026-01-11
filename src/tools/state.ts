@@ -1,6 +1,6 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
-import { ConnectClient } from '../services/connect-client.js'
+import { createAuthenticatedClient } from '../services/client-factory.js'
 import { mcpError } from '../lib/errors.js'
 import type { ApiSongObject, ApiSetObject, ApiStateObject } from '../lib/schemas.js'
 
@@ -61,21 +61,7 @@ function transformState(apiState: ApiStateObject): object {
 export function registerStateGetTool(server: McpServer): void {
   server.tool(TOOL_NAME, TOOL_DESCRIPTION, inputSchema, async (args) => {
     try {
-      const clientOptions: { host: string; port: number; token?: string } = {
-        host: args.target.host,
-        port: args.target.port,
-      }
-
-      if (args.target.token !== undefined) {
-        clientOptions.token = args.target.token
-      }
-
-      const client = new ConnectClient(clientOptions)
-
-      if (args.target.token === undefined) {
-        await client.authenticate('onsong-mcp')
-      }
-
+      const client = await createAuthenticatedClient(args.target)
       const apiState = await client.getState()
       const result = transformState(apiState)
 

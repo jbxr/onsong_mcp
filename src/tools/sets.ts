@@ -1,6 +1,6 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
-import { ConnectClient } from '../services/connect-client.js'
+import { createAuthenticatedClient } from '../services/client-factory.js'
 import { mcpError, OnSongError, ErrorCodes } from '../lib/errors.js'
 import { targetSchema } from '../lib/schemas.js'
 import type { ApiSetObject, ApiSongObject } from '../lib/schemas.js'
@@ -56,24 +56,6 @@ function transformSong(apiSong: ApiSongObject): object {
     key: apiSong.key,
     favorite: apiSong.favorite === 1,
   }
-}
-
-async function createAuthenticatedClient(target: {
-  host: string
-  port: number
-  token?: string | undefined
-}): Promise<ConnectClient> {
-  const client = new ConnectClient({
-    host: target.host,
-    port: target.port,
-    ...(target.token !== undefined && { token: target.token }),
-  })
-
-  if (target.token === undefined) {
-    await client.authenticate('onsong-mcp')
-  }
-
-  return client
 }
 
 export function registerSetsTools(server: McpServer): void {
