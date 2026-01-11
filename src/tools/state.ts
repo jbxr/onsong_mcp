@@ -2,23 +2,19 @@ import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { z } from 'zod'
 import { createAuthenticatedClient } from '../services/client-factory.js'
 import { mcpError } from '../lib/errors.js'
+import { stateGetOutputSchema, targetSchema } from '../lib/schemas.js'
 import type { ApiSongObject, ApiSetObject, ApiStateObject } from '../lib/schemas.js'
 
 const TOOL_NAME = 'onsong_state_get'
+const TOOL_TITLE = 'Get OnSong State'
 const TOOL_DESCRIPTION =
   'Get current performance state including current song, set, and scroll position'
 
-const targetSchema = z.object({
-  host: z.string().min(1),
-  port: z.number().int().min(1).max(65535),
-  token: z.string().min(32).optional(),
+const inputSchema = z.object({
+  target: targetSchema.describe('Connection target'),
 })
 
-const inputSchema = {
-  target: targetSchema.describe('Connection target'),
-}
-
-function transformSong(apiSong: ApiSongObject | undefined): object | undefined {
+function transformSong(apiSong: ApiSongObject | undefined): Record<string, unknown> | undefined {
   if (apiSong === undefined) return undefined
   return {
     id: apiSong.ID,
@@ -34,7 +30,7 @@ function transformSong(apiSong: ApiSongObject | undefined): object | undefined {
   }
 }
 
-function transformSet(apiSet: ApiSetObject | undefined): object | undefined {
+function transformSet(apiSet: ApiSetObject | undefined): Record<string, unknown> | undefined {
   if (apiSet === undefined) return undefined
   return {
     id: apiSet.ID,
@@ -46,7 +42,7 @@ function transformSet(apiSet: ApiSetObject | undefined): object | undefined {
   }
 }
 
-function transformState(apiState: ApiStateObject): object {
+function transformState(apiState: ApiStateObject): Record<string, unknown> {
   return {
     current_song: transformSong(apiState.song),
     current_set: transformSet(apiState.set),
@@ -59,17 +55,27 @@ function transformState(apiState: ApiStateObject): object {
 }
 
 export function registerStateGetTool(server: McpServer): void {
-  server.tool(TOOL_NAME, TOOL_DESCRIPTION, inputSchema, async (args) => {
-    try {
-      const client = await createAuthenticatedClient(args.target)
-      const apiState = await client.getState()
-      const result = transformState(apiState)
+  server.registerTool(
+    TOOL_NAME,
+    {
+      title: TOOL_TITLE,
+      description: TOOL_DESCRIPTION,
+      inputSchema,
+      outputSchema: stateGetOutputSchema,
+    },
+    async (args) => {
+      try {
+        const client = await createAuthenticatedClient(args.target)
+        const apiState = await client.getState()
+        const result = transformState(apiState)
 
-      return {
-        content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }],
+        return {
+          content: [{ type: 'text' as const, text: JSON.stringify(result, null, 2) }],
+          structuredContent: result,
+        }
+      } catch (error) {
+        return mcpError(error)
       }
-    } catch (error) {
-      return mcpError(error)
     }
-  })
+  )
 }

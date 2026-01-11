@@ -164,12 +164,18 @@ export const searchOutputSchema = z.object({
 
 export const importOutputSchema = z.object({
   ok: z.boolean(),
+  songId: z.string().optional(),
+  title: z.string().optional(),
+  method: z.enum(['rest_api', 'url_scheme']).optional(),
   onsong_result: z.string().optional(),
   warnings: z.array(z.string()).optional(),
 })
 
 export const exportOutputSchema = z.object({
-  exported_files: z.array(z.string()),
+  exported_files: z.array(z.string()).optional(),
+  content: z.string().optional(),
+  song_id: z.string().optional(),
+  method: z.enum(['rest_api', 'url_scheme']).optional(),
   warnings: z.array(z.string()).optional(),
 })
 
@@ -181,6 +187,51 @@ export const actionOutputSchema = z.object({
 
 export const openOutputSchema = z.object({
   ok: z.boolean(),
+})
+
+export const setsListOutputSchema = z.object({
+  sets: z.array(
+    z.object({
+      id: z.string().optional(),
+      name: z.string(),
+      song_count: z.number().int().min(0),
+      archived: z.boolean(),
+      created_at: z.string().optional(),
+      updated_at: z.string().optional(),
+    })
+  ),
+  total_count: z.number().int().min(0),
+})
+
+export const setsGetOutputSchema = z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  archived: z.boolean(),
+  created_at: z.string().optional(),
+  updated_at: z.string().optional(),
+  songs: z.array(
+    z.object({
+      id: z.string().optional(),
+      title: z.string(),
+      artist: z.string().optional(),
+      key: z.string().optional(),
+      favorite: z.boolean().optional(),
+    })
+  ),
+})
+
+export const setsCreateOutputSchema = z.object({
+  ok: z.boolean(),
+  set: z.object({
+    id: z.string(),
+    name: z.string(),
+  }),
+})
+
+export const setsAddSongOutputSchema = z.object({
+  ok: z.boolean(),
+  set_id: z.string(),
+  song_id: z.string(),
 })
 
 export const logLevelSchema = z.enum(['error', 'warn', 'info', 'debug', 'trace'])
@@ -324,6 +375,10 @@ export type ImportOutput = z.infer<typeof importOutputSchema>
 export type ExportOutput = z.infer<typeof exportOutputSchema>
 export type ActionOutput = z.infer<typeof actionOutputSchema>
 export type OpenOutput = z.infer<typeof openOutputSchema>
+export type SetsListOutput = z.infer<typeof setsListOutputSchema>
+export type SetsGetOutput = z.infer<typeof setsGetOutputSchema>
+export type SetsCreateOutput = z.infer<typeof setsCreateOutputSchema>
+export type SetsAddSongOutput = z.infer<typeof setsAddSongOutputSchema>
 
 export type ApiAuthResponse = z.infer<typeof apiAuthResponseSchema>
 export type ApiPingResponse = z.infer<typeof apiPingResponseSchema>
