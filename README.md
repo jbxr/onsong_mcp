@@ -16,6 +16,7 @@ An MCP (Model Context Protocol) server that enables LLM clients to interact with
 - **Navigation** - Open songs and sets, trigger actions (next/previous song, scroll, etc.)
 - **Import/Export** - Import ChordPro charts and export songs in various formats
 - **Set Management** - List, create, and manage sets
+- **Smart Prompts** - Guided workflows for chord chart formatting and finding
 
 ## Requirements
 
@@ -220,9 +221,71 @@ npm start -- --dry-run --log-level debug
 | `onsong.sets.create`    | Create a new set                                    |
 | `onsong.sets.add_song`  | Add a song to a set                                 |
 
+## Available Prompts
+
+Prompts guide the LLM through common workflows. They provide structured templates for specific tasks.
+
+| Prompt                 | Description                                                    |
+| ---------------------- | -------------------------------------------------------------- |
+| `format-as-chordpro`   | Convert raw chord/lyrics text to ChordPro format for OnSong    |
+| `find-chord-chart`     | Search for and import a chord chart into OnSong                |
+
+### Using Prompts
+
+#### format-as-chordpro
+
+This prompt converts raw chord charts (text with chords above lyrics) into proper ChordPro format for importing into OnSong.
+
+**Parameters:**
+- `rawContent` (required) - Raw chord chart content (lyrics with chords)
+- `title` (optional) - Song title
+- `artist` (optional) - Artist name
+- `key` (optional) - Musical key
+
+**Example:**
+```
+Use the format-as-chordpro prompt with:
+- rawContent: "G       D       Em      C\n  Amazing grace, how sweet the sound"
+- title: "Amazing Grace"
+- artist: "John Newton"
+- key: "G"
+```
+
+The prompt will guide the LLM to:
+1. Add metadata directives (`{title:}`, `{artist:}`, `{key:}`)
+2. Place chords in [brackets] before syllables
+3. Add section markers (`{comment: Verse 1}`, `{comment: Chorus}`)
+4. Preserve original lyrics
+5. Use standard chord notation
+
+#### find-chord-chart
+
+This prompt guides the LLM through the complete workflow of finding a chord chart online and importing it into OnSong.
+
+**Parameters:**
+- `songTitle` (required) - Song title to search for
+- `artist` (optional) - Artist name
+
+**Example:**
+```
+Use the find-chord-chart prompt with:
+- songTitle: "Amazing Grace"
+- artist: "John Newton"
+```
+
+The prompt will guide the LLM to:
+1. Search the web for chord charts
+2. Find one with accurate chords and complete lyrics
+3. Convert to ChordPro format
+4. Use the `onsong_library_import` tool to add it to OnSong
+
+The prompt recommends sources like Ultimate Guitar, Chordie, and official sheet music sites.
+
 ## Example Usage
 
 Once configured, you can interact with OnSong through your LLM client:
+
+### Basic Operations
 
 > "Discover OnSong devices on my network"
 
@@ -235,6 +298,16 @@ Once configured, you can interact with OnSong through your LLM client:
 > "Open 'Amazing Grace' in OnSong"
 
 > "Create a new set called 'Sunday Service'"
+
+### Using Prompts
+
+> "Find the chord chart for 'Blessed Be Your Name' by Matt Redman and import it to OnSong"
+> 
+> (Uses the `find-chord-chart` prompt to guide the LLM through searching, converting, and importing)
+
+> "Convert this chord chart to ChordPro format: [paste raw chord chart text]"
+>
+> (Uses the `format-as-chordpro` prompt to format the chart correctly)
 
 ## Troubleshooting
 
