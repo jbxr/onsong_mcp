@@ -23,7 +23,6 @@ export async function createAuthenticatedClient(
 
   if (target.token === undefined) {
     await client.authenticate(deviceName)
-    setToken(target.host, target.port, client.getToken())
   }
 
   return client
